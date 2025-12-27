@@ -4,4 +4,4 @@ project_id = "twrzhnoboxbxmmcrgwmj"
 verify_jwt = false
 
 [functions.create-sell-order]
-verify_jwt = true
+verify_jwt = false
