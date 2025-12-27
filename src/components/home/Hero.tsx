@@ -28,7 +28,7 @@ const Hero = () => {
 
           {/* Subheading */}
           <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mb-10 animate-fade-up delay-200">
-            Get the best rates on all major gift cards. Sell at 47% value or buy at just 85%. 
+            Trade all major gift cards with competitive rates. 
             Fast, secure, and hassle-free transactions.
           </p>
 
@@ -52,12 +52,12 @@ const Hero = () => {
           {/* Stats */}
           <div className="grid grid-cols-3 gap-8 md:gap-16 mt-16 pt-16 border-t border-border/50 animate-fade-up delay-400">
             <div className="text-center">
-              <p className="text-3xl md:text-4xl font-bold text-foreground">47%</p>
-              <p className="text-sm text-muted-foreground mt-1">Sell Rate</p>
+              <p className="text-3xl md:text-4xl font-bold text-foreground">50K+</p>
+              <p className="text-sm text-muted-foreground mt-1">Happy Users</p>
             </div>
             <div className="text-center">
-              <p className="text-3xl md:text-4xl font-bold text-foreground">85%</p>
-              <p className="text-sm text-muted-foreground mt-1">Buy Rate</p>
+              <p className="text-3xl md:text-4xl font-bold text-foreground">100+</p>
+              <p className="text-sm text-muted-foreground mt-1">Gift Card Brands</p>
             </div>
             <div className="text-center">
               <p className="text-3xl md:text-4xl font-bold text-foreground">&lt;1hr</p>
