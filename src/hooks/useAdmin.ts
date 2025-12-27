@@ -7,6 +7,8 @@ export interface GiftCard {
   name: string;
   description: string | null;
   image_url: string | null;
+  logo_url: string | null;
+  rate: number;
   is_active: boolean;
   created_at: string;
   updated_at: string;
@@ -202,11 +204,45 @@ export function useCreateGiftCard() {
       name: string; 
       description?: string; 
       image_url?: string;
+      logo_url?: string;
+      rate?: number;
       is_active?: boolean;
     }) => {
       const { data, error } = await supabase
         .from("gift_cards")
         .insert(giftCard)
+        .select()
+        .single();
+      
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["giftCards"] });
+    },
+  });
+}
+
+export function useUpdateGiftCard() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({ 
+      id, 
+      ...updates 
+    }: { 
+      id: string; 
+      name?: string;
+      description?: string;
+      image_url?: string;
+      logo_url?: string;
+      rate?: number;
+      is_active?: boolean;
+    }) => {
+      const { data, error } = await supabase
+        .from("gift_cards")
+        .update(updates)
+        .eq("id", id)
         .select()
         .single();
       
