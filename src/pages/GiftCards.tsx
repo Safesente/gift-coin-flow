@@ -83,10 +83,23 @@ const GiftCards = () => {
                   className="glass-card rounded-xl p-4 group transition-all duration-300 hover:shadow-medium hover:-translate-y-1"
                 >
                   {/* Card Icon */}
-                  <div
-                    className={`w-14 h-14 rounded-xl bg-gradient-to-br ${card.gradient} flex items-center justify-center mb-4 transition-transform duration-300 group-hover:scale-110`}
-                  >
-                    <span className="text-xl font-bold text-white">{card.letter}</span>
+                  <div className="w-14 h-14 rounded-xl bg-background/80 border border-border/50 flex items-center justify-center mb-4 transition-transform duration-300 group-hover:scale-110 overflow-hidden">
+                    <img 
+                      src={card.logo} 
+                      alt={card.name} 
+                      className="w-10 h-10 object-contain"
+                      onError={(e) => {
+                        const target = e.target as HTMLImageElement;
+                        target.style.display = 'none';
+                        const parent = target.parentElement;
+                        if (parent && !parent.querySelector('span')) {
+                          const span = document.createElement('span');
+                          span.className = 'text-xl font-bold text-foreground';
+                          span.textContent = card.name.charAt(0);
+                          parent.appendChild(span);
+                        }
+                      }}
+                    />
                   </div>
 
                   {/* Card Info */}
