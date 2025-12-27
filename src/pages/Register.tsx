@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { Link } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Eye, EyeOff, ArrowRight, Mail, Lock, User } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/contexts/AuthContext";
 
 const Register = () => {
   const [name, setName] = useState("");
@@ -17,6 +18,14 @@ const Register = () => {
   const [agreeTerms, setAgreeTerms] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
+  const { signUp, user } = useAuth();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (user) {
+      navigate("/dashboard");
+    }
+  }, [user, navigate]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -25,6 +34,15 @@ const Register = () => {
       toast({
         title: "Passwords don't match",
         description: "Please make sure your passwords match.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (password.length < 8) {
+      toast({
+        title: "Password too short",
+        description: "Password must be at least 8 characters long.",
         variant: "destructive",
       });
       return;
@@ -41,14 +59,26 @@ const Register = () => {
 
     setIsLoading(true);
 
-    // Simulate registration - will be connected to backend later
-    setTimeout(() => {
+    const { error } = await signUp(email, password, name);
+
+    if (error) {
+      let message = error.message;
+      if (message.includes("already registered")) {
+        message = "This email is already registered. Please log in instead.";
+      }
       toast({
-        title: "Backend Required",
-        description: "Please connect Lovable Cloud to enable authentication.",
+        title: "Registration failed",
+        description: message,
+        variant: "destructive",
       });
-      setIsLoading(false);
-    }, 1000);
+    } else {
+      toast({
+        title: "Account created!",
+        description: "Welcome to gXchange! You can now start trading gift cards.",
+      });
+      navigate("/dashboard");
+    }
+    setIsLoading(false);
   };
 
   return (
