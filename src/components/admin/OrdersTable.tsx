@@ -57,8 +57,26 @@ export function OrdersTable({ transactions, profiles, filter = "all", type = "al
   });
 
   const handleApprove = async (transaction: AdminTransaction) => {
+    const profile = profiles[transaction.user_id];
     try {
       await updateTransaction.mutateAsync({ id: transaction.id, status: "completed" });
+      
+      // Send order notification email
+      if (profile?.email) {
+        supabase.functions.invoke("send-order-notification", {
+          body: {
+            email: profile.email,
+            fullName: profile.full_name || "Customer",
+            orderType: transaction.type,
+            cardName: transaction.card_name,
+            amount: transaction.amount,
+            quantity: transaction.quantity,
+            status: "completed",
+            giftCardCode: transaction.code,
+          },
+        }).catch(console.error);
+      }
+      
       toast({ title: "Order approved", description: "The order has been marked as completed." });
     } catch {
       toast({ title: "Error", description: "Failed to approve order.", variant: "destructive" });
@@ -66,8 +84,25 @@ export function OrdersTable({ transactions, profiles, filter = "all", type = "al
   };
 
   const handleReject = async (transaction: AdminTransaction) => {
+    const profile = profiles[transaction.user_id];
     try {
       await updateTransaction.mutateAsync({ id: transaction.id, status: "cancelled" });
+      
+      // Send cancellation notification email
+      if (profile?.email) {
+        supabase.functions.invoke("send-order-notification", {
+          body: {
+            email: profile.email,
+            fullName: profile.full_name || "Customer",
+            orderType: transaction.type,
+            cardName: transaction.card_name,
+            amount: transaction.amount,
+            quantity: transaction.quantity,
+            status: "cancelled",
+          },
+        }).catch(console.error);
+      }
+      
       toast({ title: "Order rejected", description: "The order has been cancelled." });
     } catch {
       toast({ title: "Error", description: "Failed to reject order.", variant: "destructive" });

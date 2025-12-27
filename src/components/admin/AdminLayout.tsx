@@ -6,7 +6,8 @@ import {
   CreditCard, 
   Users, 
   ArrowLeft,
-  Shield
+  Shield,
+  Mail
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -19,6 +20,7 @@ const navItems = [
   { href: "/admin/orders", icon: ShoppingCart, label: "Orders" },
   { href: "/admin/cards", icon: CreditCard, label: "Gift Cards" },
   { href: "/admin/users", icon: Users, label: "Users" },
+  { href: "/admin/email-marketing", icon: Mail, label: "Email Marketing" },
 ];
 
 export function AdminLayout({ children }: AdminLayoutProps) {
