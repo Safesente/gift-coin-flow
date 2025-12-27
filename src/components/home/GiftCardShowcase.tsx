@@ -65,7 +65,6 @@ const GiftCardShowcase = () => {
                 )}
               </div>
               <p className="text-sm font-medium text-foreground truncate">{card.name}</p>
-              <p className="text-xs text-muted-foreground">Buy: {card.buy_rate}%</p>
             </div>
           ))}
         </div>

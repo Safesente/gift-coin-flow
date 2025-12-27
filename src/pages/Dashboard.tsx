@@ -12,16 +12,42 @@ import {
   CheckCircle,
   CreditCard,
   LogOut,
+  Eye,
+  EyeOff,
+  Copy,
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useTransactions, useTransactionStats, Transaction } from "@/hooks/useTransactions";
 import { format } from "date-fns";
+import { useToast } from "@/hooks/use-toast";
 
 const Dashboard = () => {
   const [activeTab, setActiveTab] = useState<"all" | "sell" | "buy">("all");
+  const [revealedCodes, setRevealedCodes] = useState<Set<string>>(new Set());
   const { user, profile, signOut } = useAuth();
   const { data: transactions = [], isLoading } = useTransactions();
   const stats = useTransactionStats();
+  const { toast } = useToast();
+
+  const toggleCodeReveal = (txnId: string) => {
+    setRevealedCodes((prev) => {
+      const newSet = new Set(prev);
+      if (newSet.has(txnId)) {
+        newSet.delete(txnId);
+      } else {
+        newSet.add(txnId);
+      }
+      return newSet;
+    });
+  };
+
+  const copyCode = (code: string) => {
+    navigator.clipboard.writeText(code);
+    toast({
+      title: "Copied!",
+      description: "Gift card code copied to clipboard.",
+    });
+  };
 
   const filteredTransactions = transactions.filter(
     (t) => activeTab === "all" || t.type === activeTab
@@ -222,38 +248,87 @@ const Dashboard = () => {
                   {filteredTransactions.map((txn: Transaction) => (
                     <div
                       key={txn.id}
-                      className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 bg-muted/50 rounded-xl hover:bg-muted transition-colors"
+                      className="p-4 bg-muted/50 rounded-xl hover:bg-muted transition-colors"
                     >
-                      <div className="flex items-center gap-4">
-                        <div
-                          className={`w-10 h-10 rounded-lg flex items-center justify-center ${
-                            txn.type === "sell" ? "bg-primary/10" : "bg-secondary/10"
-                          }`}
-                        >
-                          {txn.type === "sell" ? (
-                            <TrendingUp className="w-5 h-5 text-primary" />
-                          ) : (
-                            <TrendingDown className="w-5 h-5 text-secondary" />
-                          )}
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                        <div className="flex items-center gap-4">
+                          <div
+                            className={`w-10 h-10 rounded-lg flex items-center justify-center ${
+                              txn.type === "sell" ? "bg-primary/10" : "bg-secondary/10"
+                            }`}
+                          >
+                            {txn.type === "sell" ? (
+                              <TrendingUp className="w-5 h-5 text-primary" />
+                            ) : (
+                              <TrendingDown className="w-5 h-5 text-secondary" />
+                            )}
+                          </div>
+                          <div>
+                            <p className="font-medium text-foreground">
+                              {txn.type === "sell" ? "Sold" : "Bought"} {txn.card_name}
+                            </p>
+                            <p className="text-sm text-muted-foreground">
+                              {txn.id.slice(0, 8)} • {format(new Date(txn.created_at), "MMM d, yyyy")}
+                            </p>
+                          </div>
                         </div>
-                        <div>
-                          <p className="font-medium text-foreground">
-                            {txn.type === "sell" ? "Sold" : "Bought"} {txn.card_name}
-                          </p>
-                          <p className="text-sm text-muted-foreground">
-                            {txn.id.slice(0, 8)} • {format(new Date(txn.created_at), "MMM d, yyyy")}
-                          </p>
+                        <div className="flex items-center gap-4 sm:gap-8">
+                          <div className="text-right">
+                            <p className="font-medium text-foreground">${Number(txn.amount).toFixed(2)}</p>
+                            <p className="text-sm text-muted-foreground">
+                              Qty: {txn.quantity}
+                            </p>
+                          </div>
+                          {getStatusBadge(txn.status)}
                         </div>
                       </div>
-                      <div className="flex items-center gap-4 sm:gap-8">
-                        <div className="text-right">
-                          <p className="font-medium text-foreground">${Number(txn.amount).toFixed(2)}</p>
+                      
+                      {/* Show code for completed buy orders */}
+                      {txn.type === "buy" && txn.status === "completed" && txn.code && (
+                        <div className="mt-4 pt-4 border-t border-border">
+                          <div className="flex items-center justify-between gap-4">
+                            <div className="flex-1">
+                              <p className="text-xs text-muted-foreground mb-1">Gift Card Code</p>
+                              <div className="flex items-center gap-2">
+                                <code className="font-mono bg-background px-3 py-2 rounded-lg text-sm flex-1">
+                                  {revealedCodes.has(txn.id) ? txn.code : "••••••••••••••••"}
+                                </code>
+                                <Button
+                                  variant="ghost"
+                                  size="icon"
+                                  className="h-8 w-8"
+                                  onClick={() => toggleCodeReveal(txn.id)}
+                                >
+                                  {revealedCodes.has(txn.id) ? (
+                                    <EyeOff className="w-4 h-4" />
+                                  ) : (
+                                    <Eye className="w-4 h-4" />
+                                  )}
+                                </Button>
+                                {revealedCodes.has(txn.id) && (
+                                  <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    className="h-8 w-8"
+                                    onClick={() => copyCode(txn.code!)}
+                                  >
+                                    <Copy className="w-4 h-4" />
+                                  </Button>
+                                )}
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      )}
+                      
+                      {/* Show pending message for buy orders */}
+                      {txn.type === "buy" && txn.status === "pending" && (
+                        <div className="mt-4 pt-4 border-t border-border">
                           <p className="text-sm text-muted-foreground">
-                            Qty: {txn.quantity}
+                            Your gift card code will appear here once the order is completed.
                           </p>
                         </div>
-                        {getStatusBadge(txn.status)}
-                      </div>
+                      )}
                     </div>
                   ))}
                 </div>
