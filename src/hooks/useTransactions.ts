@@ -11,6 +11,9 @@ export interface Transaction {
   quantity: number;
   status: "pending" | "paid" | "completed" | "cancelled";
   stripe_session_id: string | null;
+  code: string | null;
+  country: string | null;
+  card_format: string | null;
   created_at: string;
   updated_at: string;
 }

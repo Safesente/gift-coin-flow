@@ -252,7 +252,7 @@ const Sell = () => {
                       <SelectContent>
                         {giftCards.map((card) => (
                           <SelectItem key={card.id} value={card.id}>
-                            {card.name} ({card.sell_rate}%)
+                            {card.name}
                           </SelectItem>
                         ))}
                       </SelectContent>
@@ -381,16 +381,12 @@ const Sell = () => {
                     <div className="bg-accent rounded-xl p-4 border border-primary/20">
                       <div className="flex items-center gap-2 mb-3">
                         <Calculator className="w-4 h-4 text-primary" />
-                        <span className="text-sm font-medium text-foreground">Calculation</span>
+                        <span className="text-sm font-medium text-foreground">Payout Estimate</span>
                       </div>
                       <div className="space-y-2 text-sm">
                         <div className="flex justify-between">
                           <span className="text-muted-foreground">Total Card Value:</span>
                           <span className="font-medium">${calculation.totalValue}</span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span className="text-muted-foreground">Rate:</span>
-                          <span className="font-medium">{selectedCardData.sell_rate}%</span>
                         </div>
                         <div className="border-t border-border pt-2 flex justify-between">
                           <span className="font-medium text-foreground">You Receive:</span>

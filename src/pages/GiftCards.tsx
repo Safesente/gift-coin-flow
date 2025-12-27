@@ -93,8 +93,7 @@ const GiftCards = () => {
                       </div>
 
                       {/* Card Info */}
-                      <h3 className="font-semibold text-foreground mb-1 truncate">{card.name}</h3>
-                      <p className="text-xs text-muted-foreground mb-4">Buy: {card.buy_rate}% | Sell: {card.sell_rate}%</p>
+                      <h3 className="font-semibold text-foreground mb-3 truncate">{card.name}</h3>
 
                       {/* Action Buttons */}
                       <div className="flex gap-2">
