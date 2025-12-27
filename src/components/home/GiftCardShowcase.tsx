@@ -3,18 +3,18 @@ import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
 
 const giftCards = [
-  { name: "Amazon", color: "from-orange-500 to-orange-600", letter: "A" },
-  { name: "Apple / iTunes", color: "from-gray-800 to-gray-900", letter: "A" },
-  { name: "Google Play", color: "from-green-500 to-green-600", letter: "G" },
-  { name: "Steam", color: "from-blue-600 to-blue-700", letter: "S" },
-  { name: "Netflix", color: "from-red-600 to-red-700", letter: "N" },
-  { name: "PlayStation", color: "from-blue-700 to-blue-800", letter: "P" },
-  { name: "Xbox", color: "from-green-600 to-green-700", letter: "X" },
-  { name: "Visa Gift Card", color: "from-blue-500 to-blue-600", letter: "V" },
-  { name: "Mastercard", color: "from-red-500 to-orange-500", letter: "M" },
-  { name: "eBay", color: "from-yellow-500 to-red-500", letter: "E" },
-  { name: "Spotify", color: "from-green-400 to-green-600", letter: "S" },
-  { name: "Uber", color: "from-gray-900 to-gray-800", letter: "U" },
+  { name: "Amazon", logo: "https://logo.clearbit.com/amazon.com" },
+  { name: "Apple / iTunes", logo: "https://logo.clearbit.com/apple.com" },
+  { name: "Google Play", logo: "https://logo.clearbit.com/play.google.com" },
+  { name: "Steam", logo: "https://logo.clearbit.com/steampowered.com" },
+  { name: "Netflix", logo: "https://logo.clearbit.com/netflix.com" },
+  { name: "PlayStation", logo: "https://logo.clearbit.com/playstation.com" },
+  { name: "Xbox", logo: "https://logo.clearbit.com/xbox.com" },
+  { name: "Visa Gift Card", logo: "https://logo.clearbit.com/visa.com" },
+  { name: "Mastercard", logo: "https://logo.clearbit.com/mastercard.com" },
+  { name: "eBay", logo: "https://logo.clearbit.com/ebay.com" },
+  { name: "Spotify", logo: "https://logo.clearbit.com/spotify.com" },
+  { name: "Uber", logo: "https://logo.clearbit.com/uber.com" },
 ];
 
 const GiftCardShowcase = () => {
@@ -41,10 +41,23 @@ const GiftCardShowcase = () => {
               key={card.name}
               className="glass-card rounded-xl p-4 group cursor-pointer transition-all duration-300 hover:shadow-medium hover:-translate-y-1"
             >
-              <div
-                className={`w-12 h-12 rounded-xl bg-gradient-to-br ${card.color} flex items-center justify-center mb-3 transition-transform duration-300 group-hover:scale-110`}
-              >
-                <span className="text-lg font-bold text-white">{card.letter}</span>
+              <div className="w-12 h-12 rounded-xl bg-background/80 border border-border/50 flex items-center justify-center mb-3 transition-transform duration-300 group-hover:scale-110 overflow-hidden">
+                <img 
+                  src={card.logo} 
+                  alt={card.name} 
+                  className="w-8 h-8 object-contain"
+                  onError={(e) => {
+                    const target = e.target as HTMLImageElement;
+                    target.style.display = 'none';
+                    const parent = target.parentElement;
+                    if (parent && !parent.querySelector('span')) {
+                      const span = document.createElement('span');
+                      span.className = 'text-lg font-bold text-foreground';
+                      span.textContent = card.name.charAt(0);
+                      parent.appendChild(span);
+                    }
+                  }}
+                />
               </div>
               <p className="text-sm font-medium text-foreground truncate">{card.name}</p>
             </div>
