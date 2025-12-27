@@ -42,6 +42,9 @@ export interface AdminTransaction {
   status: "pending" | "paid" | "completed" | "cancelled";
   code: string | null;
   stripe_session_id: string | null;
+  country: string | null;
+  card_format: string | null;
+  screenshot_url: string | null;
   created_at: string;
   updated_at: string;
 }

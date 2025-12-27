@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { format } from "date-fns";
-import { Check, X, Key, Eye, EyeOff, Loader2 } from "lucide-react";
+import { Check, X, Key, Eye, EyeOff, Loader2, Image as ImageIcon, Globe, CreditCard } from "lucide-react";
 import {
   Table,
   TableBody,
@@ -22,6 +22,8 @@ import {
 } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
 import { AdminTransaction, useUpdateTransaction } from "@/hooks/useAdmin";
+import { supabase } from "@/integrations/supabase/client";
+import { countries, cardFormats } from "@/data/giftCards";
 
 interface OrdersTableProps {
   transactions: AdminTransaction[];
@@ -41,9 +43,11 @@ export function OrdersTable({ transactions, profiles, filter = "all", type = "al
   const { toast } = useToast();
   const updateTransaction = useUpdateTransaction();
   const [codeDialogOpen, setCodeDialogOpen] = useState(false);
+  const [imageDialogOpen, setImageDialogOpen] = useState(false);
   const [selectedTransaction, setSelectedTransaction] = useState<AdminTransaction | null>(null);
   const [newCode, setNewCode] = useState("");
   const [revealedCodes, setRevealedCodes] = useState<Set<string>>(new Set());
+  const [screenshotUrl, setScreenshotUrl] = useState<string | null>(null);
 
   const filteredTransactions = transactions.filter((t) => {
     if (filter !== "all" && filter === "pending" && t.status !== "pending") return false;
@@ -99,6 +103,35 @@ export function OrdersTable({ transactions, profiles, filter = "all", type = "al
     });
   };
 
+  const handleViewScreenshot = async (transaction: AdminTransaction) => {
+    if (!transaction.screenshot_url) return;
+    
+    try {
+      const { data } = await supabase.storage
+        .from("transaction-screenshots")
+        .createSignedUrl(transaction.screenshot_url, 3600);
+      
+      if (data?.signedUrl) {
+        setScreenshotUrl(data.signedUrl);
+        setSelectedTransaction(transaction);
+        setImageDialogOpen(true);
+      }
+    } catch (error) {
+      console.error("Error fetching screenshot:", error);
+      toast({ title: "Error", description: "Failed to load screenshot.", variant: "destructive" });
+    }
+  };
+
+  const getCountryName = (code: string | null) => {
+    if (!code) return "-";
+    return countries.find((c) => c.code === code)?.name || code;
+  };
+
+  const getFormatName = (format: string | null) => {
+    if (!format) return "-";
+    return cardFormats.find((f) => f.id === format)?.name || format;
+  };
+
   if (filteredTransactions.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center py-12 text-center">
@@ -109,7 +142,7 @@ export function OrdersTable({ transactions, profiles, filter = "all", type = "al
 
   return (
     <>
-      <div className="rounded-lg border bg-card">
+      <div className="rounded-lg border bg-card overflow-x-auto">
         <Table>
           <TableHeader>
             <TableRow>
@@ -117,10 +150,13 @@ export function OrdersTable({ transactions, profiles, filter = "all", type = "al
               <TableHead>User</TableHead>
               <TableHead>Type</TableHead>
               <TableHead>Card</TableHead>
+              <TableHead>Country</TableHead>
+              <TableHead>Format</TableHead>
               <TableHead>Amount</TableHead>
               <TableHead>Qty</TableHead>
               <TableHead>Status</TableHead>
               <TableHead>Code</TableHead>
+              <TableHead>Screenshot</TableHead>
               <TableHead className="text-right">Actions</TableHead>
             </TableRow>
           </TableHeader>
@@ -131,7 +167,7 @@ export function OrdersTable({ transactions, profiles, filter = "all", type = "al
               
               return (
                 <TableRow key={transaction.id}>
-                  <TableCell className="text-muted-foreground text-sm">
+                  <TableCell className="text-muted-foreground text-sm whitespace-nowrap">
                     {format(new Date(transaction.created_at), "MMM d, yyyy HH:mm")}
                   </TableCell>
                   <TableCell>
@@ -150,6 +186,18 @@ export function OrdersTable({ transactions, profiles, filter = "all", type = "al
                     </Badge>
                   </TableCell>
                   <TableCell className="font-medium">{transaction.card_name}</TableCell>
+                  <TableCell>
+                    <div className="flex items-center gap-1">
+                      <Globe className="h-3 w-3 text-muted-foreground" />
+                      <span className="text-sm">{getCountryName(transaction.country)}</span>
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    <div className="flex items-center gap-1">
+                      <CreditCard className="h-3 w-3 text-muted-foreground" />
+                      <span className="text-sm">{getFormatName(transaction.card_format)}</span>
+                    </div>
+                  </TableCell>
                   <TableCell>${Number(transaction.amount).toFixed(2)}</TableCell>
                   <TableCell>{transaction.quantity}</TableCell>
                   <TableCell>
@@ -160,7 +208,7 @@ export function OrdersTable({ transactions, profiles, filter = "all", type = "al
                   <TableCell>
                     {transaction.code ? (
                       <div className="flex items-center gap-2">
-                        <code className="text-xs bg-muted px-2 py-1 rounded font-mono">
+                        <code className="text-xs bg-muted px-2 py-1 rounded font-mono max-w-[100px] truncate">
                           {isCodeRevealed ? transaction.code : "••••••••"}
                         </code>
                         <Button
@@ -176,9 +224,24 @@ export function OrdersTable({ transactions, profiles, filter = "all", type = "al
                       <span className="text-muted-foreground text-xs">No code</span>
                     )}
                   </TableCell>
+                  <TableCell>
+                    {transaction.screenshot_url ? (
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-8 w-8"
+                        onClick={() => handleViewScreenshot(transaction)}
+                        title="View Screenshot"
+                      >
+                        <ImageIcon className="h-4 w-4 text-primary" />
+                      </Button>
+                    ) : (
+                      <span className="text-muted-foreground text-xs">-</span>
+                    )}
+                  </TableCell>
                   <TableCell className="text-right">
                     <div className="flex items-center justify-end gap-1">
-                      {transaction.type === "sell" && (
+                      {transaction.type === "buy" && (
                         <Button
                           variant="ghost"
                           size="icon"
@@ -224,12 +287,13 @@ export function OrdersTable({ transactions, profiles, filter = "all", type = "al
         </Table>
       </div>
 
+      {/* Code Dialog */}
       <Dialog open={codeDialogOpen} onOpenChange={setCodeDialogOpen}>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Add Gift Card Code</DialogTitle>
             <DialogDescription>
-              Enter the gift card code for this sell order. The seller will be able to see this code once the order is completed.
+              Enter the gift card code for this buy order. The buyer will be able to see this code once the order is completed.
             </DialogDescription>
           </DialogHeader>
           <div className="py-4">
@@ -246,6 +310,32 @@ export function OrdersTable({ transactions, profiles, filter = "all", type = "al
             <Button onClick={handleSaveCode} disabled={updateTransaction.isPending}>
               {updateTransaction.isPending && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
               Save Code
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Screenshot Dialog */}
+      <Dialog open={imageDialogOpen} onOpenChange={setImageDialogOpen}>
+        <DialogContent className="max-w-3xl">
+          <DialogHeader>
+            <DialogTitle>Gift Card Screenshot</DialogTitle>
+            <DialogDescription>
+              Screenshot provided by the seller for order verification.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="py-4">
+            {screenshotUrl && (
+              <img
+                src={screenshotUrl}
+                alt="Gift card screenshot"
+                className="w-full rounded-lg border"
+              />
+            )}
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setImageDialogOpen(false)}>
+              Close
             </Button>
           </DialogFooter>
         </DialogContent>

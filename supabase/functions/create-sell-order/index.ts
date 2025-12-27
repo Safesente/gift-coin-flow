@@ -40,8 +40,8 @@ serve(async (req) => {
 
     logStep("User authenticated", { userId: user.id, email: user.email });
 
-    const { cardName, amount, quantity, paymentMethod, paymentDetails } = await req.json();
-    logStep("Request body parsed", { cardName, amount, quantity, paymentMethod });
+    const { cardName, amount, quantity, paymentMethod, paymentDetails, giftCardCode, country, cardFormat, screenshotUrl } = await req.json();
+    logStep("Request body parsed", { cardName, amount, quantity, paymentMethod, country, cardFormat, hasCode: !!giftCardCode, hasScreenshot: !!screenshotUrl });
 
     // Calculate payout (47% of face value)
     const SELL_RATE = 0.47;
@@ -58,6 +58,10 @@ serve(async (req) => {
         amount: totalValue,
         quantity: quantity,
         status: "pending",
+        code: giftCardCode,
+        country: country,
+        card_format: cardFormat,
+        screenshot_url: screenshotUrl,
       })
       .select()
       .single();
