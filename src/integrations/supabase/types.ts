@@ -14,6 +14,36 @@ export type Database = {
   }
   public: {
     Tables: {
+      gift_cards: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          image_url: string | null
+          is_active: boolean
+          name: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          is_active?: boolean
+          name: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          is_active?: boolean
+          name?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -48,6 +78,7 @@ export type Database = {
         Row: {
           amount: number
           card_name: string
+          code: string | null
           created_at: string
           id: string
           quantity: number
@@ -60,6 +91,7 @@ export type Database = {
         Insert: {
           amount: number
           card_name: string
+          code?: string | null
           created_at?: string
           id?: string
           quantity?: number
@@ -72,6 +104,7 @@ export type Database = {
         Update: {
           amount?: number
           card_name?: string
+          code?: string | null
           created_at?: string
           id?: string
           quantity?: number
