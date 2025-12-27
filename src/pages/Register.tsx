@@ -8,6 +8,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Eye, EyeOff, ArrowRight, Mail, Lock, User } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
+import { supabase } from "@/integrations/supabase/client";
 
 const Register = () => {
   const [name, setName] = useState("");
@@ -72,6 +73,11 @@ const Register = () => {
         variant: "destructive",
       });
     } else {
+      // Send welcome email (fire and forget)
+      supabase.functions.invoke("send-welcome-email", {
+        body: { email, fullName: name },
+      }).catch(console.error);
+      
       toast({
         title: "Account created!",
         description: "Welcome to gXchange! You can now start trading gift cards.",

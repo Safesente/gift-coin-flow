@@ -18,6 +18,7 @@ import AdminOverview from "./pages/admin/AdminOverview";
 import AdminOrders from "./pages/admin/AdminOrders";
 import AdminCards from "./pages/admin/AdminCards";
 import AdminUsers from "./pages/admin/AdminUsers";
+import AdminEmailMarketing from "./pages/admin/AdminEmailMarketing";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -75,6 +76,14 @@ const App = () => (
                 element={
                   <AdminProtectedRoute>
                     <AdminUsers />
+                  </AdminProtectedRoute>
+                }
+              />
+              <Route
+                path="/admin/email-marketing"
+                element={
+                  <AdminProtectedRoute>
+                    <AdminEmailMarketing />
                   </AdminProtectedRoute>
                 }
               />
