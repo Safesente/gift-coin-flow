@@ -16,6 +16,7 @@ export type Database = {
     Tables: {
       gift_cards: {
         Row: {
+          buy_rate: number
           created_at: string
           description: string | null
           id: string
@@ -23,10 +24,11 @@ export type Database = {
           is_active: boolean
           logo_url: string | null
           name: string
-          rate: number
+          sell_rate: number
           updated_at: string
         }
         Insert: {
+          buy_rate?: number
           created_at?: string
           description?: string | null
           id?: string
@@ -34,10 +36,11 @@ export type Database = {
           is_active?: boolean
           logo_url?: string | null
           name: string
-          rate?: number
+          sell_rate?: number
           updated_at?: string
         }
         Update: {
+          buy_rate?: number
           created_at?: string
           description?: string | null
           id?: string
@@ -45,7 +48,7 @@ export type Database = {
           is_active?: boolean
           logo_url?: string | null
           name?: string
-          rate?: number
+          sell_rate?: number
           updated_at?: string
         }
         Relationships: []

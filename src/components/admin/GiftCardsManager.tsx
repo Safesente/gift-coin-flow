@@ -61,7 +61,8 @@ export function GiftCardsManager() {
   const [newCard, setNewCard] = useState({
     name: "",
     description: "",
-    rate: 47,
+    buy_rate: 85,
+    sell_rate: 47,
     logo_url: "",
   });
 
@@ -134,11 +135,12 @@ export function GiftCardsManager() {
         name: newCard.name.trim(),
         description: newCard.description.trim() || undefined,
         logo_url: newCard.logo_url || undefined,
-        rate: newCard.rate,
+        buy_rate: newCard.buy_rate,
+        sell_rate: newCard.sell_rate,
         is_active: true,
       });
       toast({ title: "Card created", description: `${newCard.name} has been added.` });
-      setNewCard({ name: "", description: "", rate: 47, logo_url: "" });
+      setNewCard({ name: "", description: "", buy_rate: 85, sell_rate: 47, logo_url: "" });
       setDialogOpen(false);
     } catch {
       toast({ title: "Error", description: "Failed to create card.", variant: "destructive" });
@@ -159,7 +161,8 @@ export function GiftCardsManager() {
         name: editingCard.name,
         description: editingCard.description || undefined,
         logo_url: editingCard.logo_url || undefined,
-        rate: editingCard.rate,
+        buy_rate: editingCard.buy_rate,
+        sell_rate: editingCard.sell_rate,
       });
       toast({ title: "Card updated", description: `${editingCard.name} has been updated.` });
       setEditDialogOpen(false);
@@ -223,20 +226,37 @@ export function GiftCardsManager() {
                   onChange={(e) => setNewCard({ ...newCard, description: e.target.value })}
                 />
               </div>
-              <div className="space-y-2">
-                <Label htmlFor="rate">Rate (%)</Label>
-                <Input
-                  id="rate"
-                  type="number"
-                  min="1"
-                  max="100"
-                  placeholder="47"
-                  value={newCard.rate}
-                  onChange={(e) => setNewCard({ ...newCard, rate: Number(e.target.value) })}
-                />
-                <p className="text-xs text-muted-foreground">
-                  Percentage of card value for sellers / buyers
-                </p>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="buy_rate">Buy Rate (%)</Label>
+                  <Input
+                    id="buy_rate"
+                    type="number"
+                    min="1"
+                    max="100"
+                    placeholder="85"
+                    value={newCard.buy_rate}
+                    onChange={(e) => setNewCard({ ...newCard, buy_rate: Number(e.target.value) })}
+                  />
+                  <p className="text-xs text-muted-foreground">
+                    Rate for buyers
+                  </p>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="sell_rate">Sell Rate (%)</Label>
+                  <Input
+                    id="sell_rate"
+                    type="number"
+                    min="1"
+                    max="100"
+                    placeholder="47"
+                    value={newCard.sell_rate}
+                    onChange={(e) => setNewCard({ ...newCard, sell_rate: Number(e.target.value) })}
+                  />
+                  <p className="text-xs text-muted-foreground">
+                    Rate for sellers
+                  </p>
+                </div>
               </div>
               <div className="space-y-2">
                 <Label>Logo</Label>
@@ -303,19 +323,35 @@ export function GiftCardsManager() {
                   onChange={(e) => setEditingCard({ ...editingCard, description: e.target.value })}
                 />
               </div>
-              <div className="space-y-2">
-                <Label htmlFor="edit-rate">Rate (%)</Label>
-                <Input
-                  id="edit-rate"
-                  type="number"
-                  min="1"
-                  max="100"
-                  value={editingCard.rate}
-                  onChange={(e) => setEditingCard({ ...editingCard, rate: Number(e.target.value) })}
-                />
-                <p className="text-xs text-muted-foreground">
-                  Percentage of card value for sellers / buyers
-                </p>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="edit-buy_rate">Buy Rate (%)</Label>
+                  <Input
+                    id="edit-buy_rate"
+                    type="number"
+                    min="1"
+                    max="100"
+                    value={editingCard.buy_rate}
+                    onChange={(e) => setEditingCard({ ...editingCard, buy_rate: Number(e.target.value) })}
+                  />
+                  <p className="text-xs text-muted-foreground">
+                    Rate for buyers
+                  </p>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="edit-sell_rate">Sell Rate (%)</Label>
+                  <Input
+                    id="edit-sell_rate"
+                    type="number"
+                    min="1"
+                    max="100"
+                    value={editingCard.sell_rate}
+                    onChange={(e) => setEditingCard({ ...editingCard, sell_rate: Number(e.target.value) })}
+                  />
+                  <p className="text-xs text-muted-foreground">
+                    Rate for sellers
+                  </p>
+                </div>
               </div>
               <div className="space-y-2">
                 <Label>Logo</Label>
@@ -361,7 +397,8 @@ export function GiftCardsManager() {
             <TableRow>
               <TableHead>Logo</TableHead>
               <TableHead>Name</TableHead>
-              <TableHead>Rate</TableHead>
+              <TableHead>Buy Rate</TableHead>
+              <TableHead>Sell Rate</TableHead>
               <TableHead>Status</TableHead>
               <TableHead className="text-right">Actions</TableHead>
             </TableRow>
@@ -384,7 +421,10 @@ export function GiftCardsManager() {
                 </TableCell>
                 <TableCell className="font-medium">{card.name}</TableCell>
                 <TableCell>
-                  <Badge variant="secondary">{card.rate}%</Badge>
+                  <Badge variant="secondary">{card.buy_rate}%</Badge>
+                </TableCell>
+                <TableCell>
+                  <Badge variant="outline">{card.sell_rate}%</Badge>
                 </TableCell>
                 <TableCell>
                   <Badge variant={card.is_active ? "default" : "secondary"}>
