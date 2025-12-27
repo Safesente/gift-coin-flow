@@ -86,11 +86,14 @@ export type Database = {
       transactions: {
         Row: {
           amount: number
+          card_format: string | null
           card_name: string
           code: string | null
+          country: string | null
           created_at: string
           id: string
           quantity: number
+          screenshot_url: string | null
           status: Database["public"]["Enums"]["transaction_status"]
           stripe_session_id: string | null
           type: Database["public"]["Enums"]["transaction_type"]
@@ -99,11 +102,14 @@ export type Database = {
         }
         Insert: {
           amount: number
+          card_format?: string | null
           card_name: string
           code?: string | null
+          country?: string | null
           created_at?: string
           id?: string
           quantity?: number
+          screenshot_url?: string | null
           status?: Database["public"]["Enums"]["transaction_status"]
           stripe_session_id?: string | null
           type: Database["public"]["Enums"]["transaction_type"]
@@ -112,11 +118,14 @@ export type Database = {
         }
         Update: {
           amount?: number
+          card_format?: string | null
           card_name?: string
           code?: string | null
+          country?: string | null
           created_at?: string
           id?: string
           quantity?: number
+          screenshot_url?: string | null
           status?: Database["public"]["Enums"]["transaction_status"]
           stripe_session_id?: string | null
           type?: Database["public"]["Enums"]["transaction_type"]

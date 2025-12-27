@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useRef } from "react";
 import { useSearchParams, Link, useNavigate } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import Header from "@/components/layout/Header";
@@ -7,8 +7,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { cardAmounts, paymentMethods } from "@/data/giftCards";
-import { ArrowRight, DollarSign, CreditCard, Calculator, CheckCircle, Loader2 } from "lucide-react";
+import { cardAmounts, paymentMethods, countries, cardFormats } from "@/data/giftCards";
+import { ArrowRight, DollarSign, CreditCard, Calculator, CheckCircle, Loader2, Upload, X, Image as ImageIcon } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
@@ -22,12 +22,18 @@ const Sell = () => {
   const { data: giftCards = [], isLoading: cardsLoading } = useGiftCards(false);
   
   const [selectedCard, setSelectedCard] = useState(preselectedCard);
+  const [country, setCountry] = useState("");
+  const [cardFormat, setCardFormat] = useState("");
   const [cardAmount, setCardAmount] = useState<number | "">("");
   const [quantity, setQuantity] = useState(1);
+  const [giftCardCode, setGiftCardCode] = useState("");
+  const [screenshotFile, setScreenshotFile] = useState<File | null>(null);
+  const [screenshotPreview, setScreenshotPreview] = useState<string | null>(null);
   const [paymentMethod, setPaymentMethod] = useState("");
   const [paymentDetails, setPaymentDetails] = useState("");
   const [step, setStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
   const { user } = useAuth();
 
@@ -41,11 +47,39 @@ const Sell = () => {
     return { totalValue, payout };
   }, [cardAmount, quantity, sellRate]);
 
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      if (file.size > 5 * 1024 * 1024) {
+        toast({
+          title: "File too large",
+          description: "Screenshot must be less than 5MB.",
+          variant: "destructive",
+        });
+        return;
+      }
+      setScreenshotFile(file);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setScreenshotPreview(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const removeScreenshot = () => {
+    setScreenshotFile(null);
+    setScreenshotPreview(null);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
+  };
+
   const handleSubmit = async () => {
-    if (!selectedCard || !cardAmount || !paymentMethod || !paymentDetails) {
+    if (!selectedCard || !cardAmount || !paymentMethod || !paymentDetails || !giftCardCode || !country || !cardFormat) {
       toast({
         title: "Missing Information",
-        description: "Please fill in all required fields.",
+        description: "Please fill in all required fields including gift card code, country, and card format.",
         variant: "destructive",
       });
       return;
@@ -64,6 +98,29 @@ const Sell = () => {
     setIsSubmitting(true);
 
     try {
+      let screenshotUrl = null;
+
+      // Upload screenshot if provided
+      if (screenshotFile) {
+        const fileExt = screenshotFile.name.split(".").pop();
+        const fileName = `${user.id}/${Date.now()}.${fileExt}`;
+        
+        const { data: uploadData, error: uploadError } = await supabase.storage
+          .from("transaction-screenshots")
+          .upload(fileName, screenshotFile);
+
+        if (uploadError) {
+          console.error("Screenshot upload error:", uploadError);
+          toast({
+            title: "Upload Failed",
+            description: "Failed to upload screenshot. Proceeding without it.",
+            variant: "destructive",
+          });
+        } else {
+          screenshotUrl = uploadData?.path;
+        }
+      }
+
       const { data, error } = await supabase.functions.invoke("create-sell-order", {
         body: {
           cardName: selectedCardData?.name,
@@ -71,6 +128,10 @@ const Sell = () => {
           quantity,
           paymentMethod,
           paymentDetails,
+          giftCardCode,
+          country,
+          cardFormat,
+          screenshotUrl,
         },
       });
 
@@ -173,12 +234,12 @@ const Sell = () => {
               </div>
             )}
 
-            {/* Step 1: Select Card */}
+            {/* Step 1: Select Card & Enter Details */}
             {step === 1 && (
               <div className="glass-card rounded-2xl p-8 animate-fade-up">
                 <h2 className="text-xl font-semibold text-foreground mb-6 flex items-center gap-2">
                   <CreditCard className="w-5 h-5 text-primary" />
-                  Select Gift Card
+                  Gift Card Details
                 </h2>
 
                 <div className="space-y-5">
@@ -196,6 +257,41 @@ const Sell = () => {
                         ))}
                       </SelectContent>
                     </Select>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label>Country</Label>
+                    <Select value={country} onValueChange={setCountry}>
+                      <SelectTrigger className="h-12">
+                        <SelectValue placeholder="Select country" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {countries.map((c) => (
+                          <SelectItem key={c.code} value={c.code}>
+                            {c.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label>Card Format</Label>
+                    <div className="grid grid-cols-2 gap-3">
+                      {cardFormats.map((format) => (
+                        <button
+                          key={format.id}
+                          onClick={() => setCardFormat(format.id)}
+                          className={`p-4 rounded-xl border-2 transition-all text-center ${
+                            cardFormat === format.id
+                              ? "border-primary bg-primary/5"
+                              : "border-border hover:border-primary/50"
+                          }`}
+                        >
+                          <p className="font-medium text-foreground">{format.name}</p>
+                        </button>
+                      ))}
+                    </div>
                   </div>
 
                   <div className="space-y-2">
@@ -229,6 +325,57 @@ const Sell = () => {
                     />
                   </div>
 
+                  <div className="space-y-2">
+                    <Label>Gift Card Code *</Label>
+                    <Input
+                      placeholder="Enter your gift card code"
+                      value={giftCardCode}
+                      onChange={(e) => setGiftCardCode(e.target.value)}
+                      className="h-12 font-mono"
+                    />
+                    <p className="text-xs text-muted-foreground">
+                      This code will be verified by our team before payout.
+                    </p>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label>Card Screenshot (Optional)</Label>
+                    <input
+                      type="file"
+                      ref={fileInputRef}
+                      onChange={handleFileSelect}
+                      accept="image/*"
+                      className="hidden"
+                    />
+                    {screenshotPreview ? (
+                      <div className="relative rounded-xl border border-border overflow-hidden">
+                        <img
+                          src={screenshotPreview}
+                          alt="Screenshot preview"
+                          className="w-full h-48 object-cover"
+                        />
+                        <button
+                          onClick={removeScreenshot}
+                          className="absolute top-2 right-2 p-1 rounded-full bg-background/80 hover:bg-background transition-colors"
+                        >
+                          <X className="w-4 h-4" />
+                        </button>
+                      </div>
+                    ) : (
+                      <button
+                        onClick={() => fileInputRef.current?.click()}
+                        className="w-full h-32 rounded-xl border-2 border-dashed border-border hover:border-primary/50 transition-colors flex flex-col items-center justify-center gap-2"
+                      >
+                        <div className="w-10 h-10 rounded-lg bg-muted flex items-center justify-center">
+                          <Upload className="w-5 h-5 text-muted-foreground" />
+                        </div>
+                        <p className="text-sm text-muted-foreground">
+                          Click to upload screenshot (max 5MB)
+                        </p>
+                      </button>
+                    )}
+                  </div>
+
                   {/* Calculation Preview */}
                   {calculation && selectedCardData && (
                     <div className="bg-accent rounded-xl p-4 border border-primary/20">
@@ -257,7 +404,7 @@ const Sell = () => {
 
                   <Button
                     onClick={() => setStep(2)}
-                    disabled={!selectedCard || !cardAmount}
+                    disabled={!selectedCard || !cardAmount || !giftCardCode || !country || !cardFormat}
                     className="w-full gap-2"
                     size="lg"
                   >
@@ -362,6 +509,18 @@ const Sell = () => {
                     <span className="font-medium">{selectedCardData?.name}</span>
                   </div>
                   <div className="flex justify-between py-3 border-b border-border">
+                    <span className="text-muted-foreground">Country</span>
+                    <span className="font-medium">
+                      {countries.find((c) => c.code === country)?.name}
+                    </span>
+                  </div>
+                  <div className="flex justify-between py-3 border-b border-border">
+                    <span className="text-muted-foreground">Card Format</span>
+                    <span className="font-medium">
+                      {cardFormats.find((f) => f.id === cardFormat)?.name}
+                    </span>
+                  </div>
+                  <div className="flex justify-between py-3 border-b border-border">
                     <span className="text-muted-foreground">Card Amount</span>
                     <span className="font-medium">${cardAmount} x {quantity}</span>
                   </div>
@@ -369,6 +528,21 @@ const Sell = () => {
                     <span className="text-muted-foreground">Total Value</span>
                     <span className="font-medium">${calculation?.totalValue}</span>
                   </div>
+                  <div className="flex justify-between py-3 border-b border-border">
+                    <span className="text-muted-foreground">Gift Card Code</span>
+                    <code className="font-mono bg-muted px-2 py-1 rounded text-sm">
+                      {giftCardCode}
+                    </code>
+                  </div>
+                  {screenshotPreview && (
+                    <div className="py-3 border-b border-border">
+                      <span className="text-muted-foreground block mb-2">Screenshot</span>
+                      <div className="flex items-center gap-2">
+                        <ImageIcon className="w-4 h-4 text-muted-foreground" />
+                        <span className="text-sm text-foreground">Screenshot attached</span>
+                      </div>
+                    </div>
+                  )}
                   <div className="flex justify-between py-3 border-b border-border">
                     <span className="text-muted-foreground">Payment Method</span>
                     <span className="font-medium">

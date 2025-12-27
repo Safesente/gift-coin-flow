@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { cardAmounts } from "@/data/giftCards";
+import { cardAmounts, countries, cardFormats } from "@/data/giftCards";
 import { ArrowRight, ShoppingCart, CreditCard, Calculator, CheckCircle, Loader2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
@@ -25,6 +25,8 @@ const Buy = () => {
   const { data: giftCards = [], isLoading: cardsLoading } = useGiftCards(false);
   
   const [selectedCard, setSelectedCard] = useState(preselectedCard);
+  const [country, setCountry] = useState("");
+  const [cardFormat, setCardFormat] = useState("");
   const [cardAmount, setCardAmount] = useState<number | "">("");
   const [quantity, setQuantity] = useState(1);
   const [step, setStep] = useState(isSuccess ? 3 : 1);
@@ -59,10 +61,10 @@ const Buy = () => {
   }, [cardAmount, quantity, buyRate]);
 
   const handleSubmit = async () => {
-    if (!selectedCard || !cardAmount || !selectedCardData) {
+    if (!selectedCard || !cardAmount || !selectedCardData || !country || !cardFormat) {
       toast({
         title: "Missing Information",
-        description: "Please fill in all required fields.",
+        description: "Please fill in all required fields including country and card format.",
         variant: "destructive",
       });
       return;
@@ -76,6 +78,8 @@ const Buy = () => {
           amount: Number(cardAmount),
           cardName: selectedCardData.name,
           quantity,
+          country,
+          cardFormat,
         },
       });
 
@@ -214,6 +218,41 @@ const Buy = () => {
                   </div>
 
                   <div className="space-y-2">
+                    <Label>Country</Label>
+                    <Select value={country} onValueChange={setCountry}>
+                      <SelectTrigger className="h-12">
+                        <SelectValue placeholder="Select country" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {countries.map((c) => (
+                          <SelectItem key={c.code} value={c.code}>
+                            {c.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label>Card Format</Label>
+                    <div className="grid grid-cols-2 gap-3">
+                      {cardFormats.map((format) => (
+                        <button
+                          key={format.id}
+                          onClick={() => setCardFormat(format.id)}
+                          className={`p-4 rounded-xl border-2 transition-all text-center ${
+                            cardFormat === format.id
+                              ? "border-secondary bg-secondary/5"
+                              : "border-border hover:border-secondary/50"
+                          }`}
+                        >
+                          <p className="font-medium text-foreground">{format.name}</p>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="space-y-2">
                     <Label>Card Amount ($)</Label>
                     <Select
                       value={cardAmount?.toString()}
@@ -276,7 +315,7 @@ const Buy = () => {
 
                   <Button
                     onClick={() => setStep(2)}
-                    disabled={!selectedCard || !cardAmount}
+                    disabled={!selectedCard || !cardAmount || !country || !cardFormat}
                     className="w-full gap-2"
                     size="lg"
                     variant="gold"
@@ -300,6 +339,18 @@ const Buy = () => {
                   <div className="flex justify-between py-3 border-b border-border">
                     <span className="text-muted-foreground">Gift Card</span>
                     <span className="font-medium">{selectedCardData?.name}</span>
+                  </div>
+                  <div className="flex justify-between py-3 border-b border-border">
+                    <span className="text-muted-foreground">Country</span>
+                    <span className="font-medium">
+                      {countries.find((c) => c.code === country)?.name}
+                    </span>
+                  </div>
+                  <div className="flex justify-between py-3 border-b border-border">
+                    <span className="text-muted-foreground">Card Format</span>
+                    <span className="font-medium">
+                      {cardFormats.find((f) => f.id === cardFormat)?.name}
+                    </span>
                   </div>
                   <div className="flex justify-between py-3 border-b border-border">
                     <span className="text-muted-foreground">Card Amount</span>
