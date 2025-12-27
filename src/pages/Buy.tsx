@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { useSearchParams, Link } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import Header from "@/components/layout/Header";
@@ -10,17 +10,40 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { giftCards, cardAmounts, BUY_RATE } from "@/data/giftCards";
 import { ArrowRight, ShoppingCart, CreditCard, Calculator, CheckCircle } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 
 const Buy = () => {
   const [searchParams] = useSearchParams();
   const preselectedCard = searchParams.get("card") || "";
+  const isSuccess = searchParams.get("success") === "true";
+  const isCanceled = searchParams.get("canceled") === "true";
+  const successAmount = searchParams.get("amount");
+  const successQuantity = searchParams.get("quantity");
+  const successCard = searchParams.get("card");
   
   const [selectedCard, setSelectedCard] = useState(preselectedCard);
   const [cardAmount, setCardAmount] = useState<number | "">("");
   const [quantity, setQuantity] = useState(1);
-  const [step, setStep] = useState(1);
+  const [step, setStep] = useState(isSuccess ? 3 : 1);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
+
+  // Handle success/canceled states from Stripe redirect
+  useEffect(() => {
+    if (isSuccess) {
+      setStep(3);
+      if (successAmount) setCardAmount(Number(successAmount));
+      if (successQuantity) setQuantity(Number(successQuantity));
+      if (successCard) setSelectedCard(successCard);
+    }
+    if (isCanceled) {
+      toast({
+        title: "Payment Canceled",
+        description: "Your payment was canceled. You can try again.",
+        variant: "destructive",
+      });
+    }
+  }, [isSuccess, isCanceled, successAmount, successQuantity, successCard, toast]);
 
   const selectedCardData = giftCards.find((c) => c.id === selectedCard);
 
@@ -32,7 +55,7 @@ const Buy = () => {
   }, [cardAmount, quantity]);
 
   const handleSubmit = async () => {
-    if (!selectedCard || !cardAmount) {
+    if (!selectedCard || !cardAmount || !selectedCardData) {
       toast({
         title: "Missing Information",
         description: "Please fill in all required fields.",
@@ -43,15 +66,32 @@ const Buy = () => {
 
     setIsSubmitting(true);
 
-    // Simulate submission
-    setTimeout(() => {
-      toast({
-        title: "Order Submitted!",
-        description: "Your order is pending. You'll receive the gift card codes once approved.",
+    try {
+      const { data, error } = await supabase.functions.invoke("create-checkout", {
+        body: {
+          amount: Number(cardAmount),
+          cardName: selectedCardData.name,
+          quantity,
+        },
       });
-      setStep(3);
+
+      if (error) throw error;
+
+      if (data?.url) {
+        window.open(data.url, "_blank");
+      } else {
+        throw new Error("No checkout URL received");
+      }
+    } catch (error) {
+      console.error("Checkout error:", error);
+      toast({
+        title: "Checkout Failed",
+        description: "Unable to start checkout. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
       setIsSubmitting(false);
-    }, 1500);
+    }
   };
 
   return (
@@ -286,7 +326,7 @@ const Buy = () => {
                     className="flex-1 gap-2"
                     variant="gold"
                   >
-                    {isSubmitting ? "Processing..." : "Complete Purchase"}
+                    {isSubmitting ? "Redirecting to Stripe..." : "Pay with Stripe"}
                     {!isSubmitting && <ArrowRight className="w-4 h-4" />}
                   </Button>
                 </div>
