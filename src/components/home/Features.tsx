@@ -19,7 +19,7 @@ const features = [
   {
     icon: TrendingUp,
     title: "Best Rates",
-    description: "Sell at 47% or buy at 85% - competitive rates that benefit you.",
+    description: "Get competitive rates on all gift card transactions that benefit you.",
   },
   {
     icon: Lock,

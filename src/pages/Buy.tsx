@@ -116,7 +116,7 @@ const Buy = () => {
         <title>Buy Gift Cards - gXchange | Get 15% Off All Cards</title>
         <meta
           name="description"
-          content="Buy gift cards at 85% of face value on gXchange. Amazon, Apple, Steam, Netflix and 50+ more brands available."
+          content="Buy gift cards at discounted prices on gXchange. Amazon, Apple, Steam, Netflix and 50+ more brands available."
         />
       </Helmet>
 

@@ -14,7 +14,7 @@ const Index = () => {
         <title>gXchange - Buy & Sell Gift Cards Instantly | Best Rates</title>
         <meta
           name="description"
-          content="Trade gift cards instantly on gXchange. Sell your gift cards at 47% value or buy at 85%. Fast, secure transactions with PayPal, Skrill, Google Pay & Binance Pay."
+          content="Trade gift cards instantly on gXchange. Get competitive rates on all major brands. Fast, secure transactions with PayPal, Skrill, Google Pay & Binance Pay."
         />
         <meta
           name="keywords"
