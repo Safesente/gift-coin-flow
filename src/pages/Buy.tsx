@@ -7,10 +7,11 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { giftCards, cardAmounts, BUY_RATE } from "@/data/giftCards";
-import { ArrowRight, ShoppingCart, CreditCard, Calculator, CheckCircle } from "lucide-react";
+import { cardAmounts } from "@/data/giftCards";
+import { ArrowRight, ShoppingCart, CreditCard, Calculator, CheckCircle, Loader2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import { useGiftCards } from "@/hooks/useAdmin";
 
 const Buy = () => {
   const [searchParams] = useSearchParams();
@@ -20,6 +21,8 @@ const Buy = () => {
   const successAmount = searchParams.get("amount");
   const successQuantity = searchParams.get("quantity");
   const successCard = searchParams.get("card");
+  
+  const { data: giftCards = [], isLoading: cardsLoading } = useGiftCards(false);
   
   const [selectedCard, setSelectedCard] = useState(preselectedCard);
   const [cardAmount, setCardAmount] = useState<number | "">("");
@@ -46,13 +49,14 @@ const Buy = () => {
   }, [isSuccess, isCanceled, successAmount, successQuantity, successCard, toast]);
 
   const selectedCardData = giftCards.find((c) => c.id === selectedCard);
+  const buyRate = selectedCardData?.buy_rate ? selectedCardData.buy_rate / 100 : 0.85;
 
   const calculation = useMemo(() => {
     if (!cardAmount || !quantity) return null;
     const totalValue = Number(cardAmount) * quantity;
-    const price = totalValue * BUY_RATE;
+    const price = totalValue * buyRate;
     return { totalValue, price, savings: totalValue - price };
-  }, [cardAmount, quantity]);
+  }, [cardAmount, quantity, buyRate]);
 
   const handleSubmit = async () => {
     if (!selectedCard || !cardAmount || !selectedCardData) {
@@ -94,6 +98,14 @@ const Buy = () => {
     }
   };
 
+  if (cardsLoading) {
+    return (
+      <div className="min-h-screen bg-gradient-hero flex items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+      </div>
+    );
+  }
+
   return (
     <>
       <Helmet>
@@ -113,13 +125,13 @@ const Buy = () => {
             <div className="text-center mb-10">
               <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-secondary/10 border border-secondary/20 mb-4">
                 <ShoppingCart className="w-4 h-4 text-secondary" />
-                <span className="text-sm font-medium text-foreground">Save 15% on All Cards</span>
+                <span className="text-sm font-medium text-foreground">Save on All Cards</span>
               </div>
               <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-2">
                 Buy Gift Cards
               </h1>
               <p className="text-muted-foreground">
-                Get gift cards at just 85% of face value
+                Get gift cards at discounted rates
               </p>
             </div>
 
@@ -194,7 +206,7 @@ const Buy = () => {
                       <SelectContent>
                         {giftCards.map((card) => (
                           <SelectItem key={card.id} value={card.id}>
-                            {card.name}
+                            {card.name} ({card.buy_rate}%)
                           </SelectItem>
                         ))}
                       </SelectContent>
@@ -233,7 +245,7 @@ const Buy = () => {
                   </div>
 
                   {/* Calculation Preview */}
-                  {calculation && (
+                  {calculation && selectedCardData && (
                     <div className="bg-accent rounded-xl p-4 border border-secondary/20">
                       <div className="flex items-center gap-2 mb-3">
                         <Calculator className="w-4 h-4 text-secondary" />
@@ -246,7 +258,7 @@ const Buy = () => {
                         </div>
                         <div className="flex justify-between">
                           <span className="text-muted-foreground">Rate:</span>
-                          <span className="font-medium">{BUY_RATE * 100}%</span>
+                          <span className="font-medium">{selectedCardData.buy_rate}%</span>
                         </div>
                         <div className="flex justify-between text-primary">
                           <span>You Save:</span>

@@ -7,16 +7,19 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { giftCards, cardAmounts, paymentMethods, SELL_RATE } from "@/data/giftCards";
-import { ArrowRight, DollarSign, CreditCard, Calculator, CheckCircle } from "lucide-react";
+import { cardAmounts, paymentMethods } from "@/data/giftCards";
+import { ArrowRight, DollarSign, CreditCard, Calculator, CheckCircle, Loader2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
+import { useGiftCards } from "@/hooks/useAdmin";
 
 const Sell = () => {
   const [searchParams] = useSearchParams();
   const preselectedCard = searchParams.get("card") || "";
   const navigate = useNavigate();
+  
+  const { data: giftCards = [], isLoading: cardsLoading } = useGiftCards(false);
   
   const [selectedCard, setSelectedCard] = useState(preselectedCard);
   const [cardAmount, setCardAmount] = useState<number | "">("");
@@ -29,13 +32,14 @@ const Sell = () => {
   const { user } = useAuth();
 
   const selectedCardData = giftCards.find((c) => c.id === selectedCard);
+  const sellRate = selectedCardData?.sell_rate ? selectedCardData.sell_rate / 100 : 0.47;
 
   const calculation = useMemo(() => {
     if (!cardAmount || !quantity) return null;
     const totalValue = Number(cardAmount) * quantity;
-    const payout = totalValue * SELL_RATE;
+    const payout = totalValue * sellRate;
     return { totalValue, payout };
-  }, [cardAmount, quantity]);
+  }, [cardAmount, quantity, sellRate]);
 
   const handleSubmit = async () => {
     if (!selectedCard || !cardAmount || !paymentMethod || !paymentDetails) {
@@ -89,13 +93,21 @@ const Sell = () => {
     }
   };
 
+  if (cardsLoading) {
+    return (
+      <div className="min-h-screen bg-gradient-hero flex items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+      </div>
+    );
+  }
+
   return (
     <>
       <Helmet>
-        <title>Sell Gift Cards - gXchange | Get 47% Value Instantly</title>
+        <title>Sell Gift Cards - gXchange | Get Paid Instantly</title>
         <meta
           name="description"
-          content="Sell your gift cards on gXchange and receive 47% of the card value. Fast payout via PayPal, Skrill, Google Pay, or Binance."
+          content="Sell your gift cards on gXchange. Fast payout via PayPal, Skrill, Google Pay, or Binance."
         />
       </Helmet>
 
@@ -108,7 +120,7 @@ const Sell = () => {
             <div className="text-center mb-10">
               <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 mb-4">
                 <DollarSign className="w-4 h-4 text-primary" />
-                <span className="text-sm font-medium text-foreground">Sell at 47% Value</span>
+                <span className="text-sm font-medium text-foreground">Sell Your Cards</span>
               </div>
               <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-2">
                 Sell Your Gift Cards
@@ -179,7 +191,7 @@ const Sell = () => {
                       <SelectContent>
                         {giftCards.map((card) => (
                           <SelectItem key={card.id} value={card.id}>
-                            {card.name}
+                            {card.name} ({card.sell_rate}%)
                           </SelectItem>
                         ))}
                       </SelectContent>
@@ -218,7 +230,7 @@ const Sell = () => {
                   </div>
 
                   {/* Calculation Preview */}
-                  {calculation && (
+                  {calculation && selectedCardData && (
                     <div className="bg-accent rounded-xl p-4 border border-primary/20">
                       <div className="flex items-center gap-2 mb-3">
                         <Calculator className="w-4 h-4 text-primary" />
@@ -231,7 +243,7 @@ const Sell = () => {
                         </div>
                         <div className="flex justify-between">
                           <span className="text-muted-foreground">Rate:</span>
-                          <span className="font-medium">{SELL_RATE * 100}%</span>
+                          <span className="font-medium">{selectedCardData.sell_rate}%</span>
                         </div>
                         <div className="border-t border-border pt-2 flex justify-between">
                           <span className="font-medium text-foreground">You Receive:</span>

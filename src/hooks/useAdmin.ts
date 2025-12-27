@@ -8,7 +8,8 @@ export interface GiftCard {
   description: string | null;
   image_url: string | null;
   logo_url: string | null;
-  rate: number;
+  buy_rate: number;
+  sell_rate: number;
   is_active: boolean;
   created_at: string;
   updated_at: string;
@@ -205,7 +206,8 @@ export function useCreateGiftCard() {
       description?: string; 
       image_url?: string;
       logo_url?: string;
-      rate?: number;
+      buy_rate?: number;
+      sell_rate?: number;
       is_active?: boolean;
     }) => {
       const { data, error } = await supabase
@@ -236,7 +238,8 @@ export function useUpdateGiftCard() {
       description?: string;
       image_url?: string;
       logo_url?: string;
-      rate?: number;
+      buy_rate?: number;
+      sell_rate?: number;
       is_active?: boolean;
     }) => {
       const { data, error } = await supabase
