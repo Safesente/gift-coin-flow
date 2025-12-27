@@ -7,69 +7,23 @@ import { Badge } from "@/components/ui/badge";
 import {
   TrendingUp,
   TrendingDown,
-  DollarSign,
   ShoppingCart,
   Clock,
   CheckCircle,
-  ArrowRight,
   CreditCard,
   LogOut,
 } from "lucide-react";
-
-// Mock data - will be replaced with real data from backend
-const mockStats = {
-  totalTransactions: 12,
-  sellPending: 2,
-  sellPaid: 5,
-  buyPending: 1,
-  buyCompleted: 4,
-  totalSold: 850,
-  totalBought: 425,
-};
-
-const mockTransactions = [
-  {
-    id: "TXN001",
-    type: "sell",
-    card: "Amazon",
-    amount: 100,
-    payout: 47,
-    status: "paid",
-    date: "2024-01-15",
-  },
-  {
-    id: "TXN002",
-    type: "buy",
-    card: "Steam",
-    amount: 50,
-    price: 42.5,
-    status: "completed",
-    date: "2024-01-14",
-  },
-  {
-    id: "TXN003",
-    type: "sell",
-    card: "Apple",
-    amount: 200,
-    payout: 94,
-    status: "pending",
-    date: "2024-01-13",
-  },
-  {
-    id: "TXN004",
-    type: "buy",
-    card: "Netflix",
-    amount: 25,
-    price: 21.25,
-    status: "pending",
-    date: "2024-01-12",
-  },
-];
+import { useAuth } from "@/contexts/AuthContext";
+import { useTransactions, useTransactionStats, Transaction } from "@/hooks/useTransactions";
+import { format } from "date-fns";
 
 const Dashboard = () => {
   const [activeTab, setActiveTab] = useState<"all" | "sell" | "buy">("all");
+  const { user, profile, signOut } = useAuth();
+  const { data: transactions = [], isLoading } = useTransactions();
+  const stats = useTransactionStats();
 
-  const filteredTransactions = mockTransactions.filter(
+  const filteredTransactions = transactions.filter(
     (t) => activeTab === "all" || t.type === activeTab
   );
 
@@ -83,16 +37,32 @@ const Dashboard = () => {
           </Badge>
         );
       case "paid":
+        return (
+          <Badge variant="secondary" className="bg-status-paid/10 text-status-paid border-0">
+            <CheckCircle className="w-3 h-3 mr-1" />
+            Paid
+          </Badge>
+        );
       case "completed":
         return (
           <Badge variant="secondary" className="bg-status-completed/10 text-status-completed border-0">
             <CheckCircle className="w-3 h-3 mr-1" />
-            {status === "paid" ? "Paid" : "Completed"}
+            Completed
+          </Badge>
+        );
+      case "cancelled":
+        return (
+          <Badge variant="secondary" className="bg-destructive/10 text-destructive border-0">
+            Cancelled
           </Badge>
         );
       default:
         return null;
     }
+  };
+
+  const handleSignOut = async () => {
+    await signOut();
   };
 
   return (
@@ -110,8 +80,10 @@ const Dashboard = () => {
             {/* Welcome Header */}
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
               <div>
-                <h1 className="text-2xl md:text-3xl font-bold text-foreground">Welcome back!</h1>
-                <p className="text-muted-foreground">Here's your transaction overview</p>
+                <h1 className="text-2xl md:text-3xl font-bold text-foreground">
+                  Welcome back{profile?.full_name ? `, ${profile.full_name}` : ""}!
+                </h1>
+                <p className="text-muted-foreground">{user?.email}</p>
               </div>
               <div className="flex gap-3">
                 <Link to="/sell">
@@ -126,6 +98,10 @@ const Dashboard = () => {
                     Buy Cards
                   </Button>
                 </Link>
+                <Button variant="ghost" onClick={handleSignOut} className="gap-2">
+                  <LogOut className="w-4 h-4" />
+                  Sign Out
+                </Button>
               </div>
             </div>
 
@@ -137,7 +113,7 @@ const Dashboard = () => {
                     <CreditCard className="w-5 h-5 text-primary" />
                   </div>
                 </div>
-                <p className="text-2xl font-bold text-foreground">{mockStats.totalTransactions}</p>
+                <p className="text-2xl font-bold text-foreground">{stats.totalTransactions}</p>
                 <p className="text-sm text-muted-foreground">Total Transactions</p>
               </div>
 
@@ -147,7 +123,7 @@ const Dashboard = () => {
                     <TrendingUp className="w-5 h-5 text-primary" />
                   </div>
                 </div>
-                <p className="text-2xl font-bold text-foreground">${mockStats.totalSold}</p>
+                <p className="text-2xl font-bold text-foreground">${stats.totalSold.toFixed(2)}</p>
                 <p className="text-sm text-muted-foreground">Total Sold</p>
               </div>
 
@@ -157,7 +133,7 @@ const Dashboard = () => {
                     <ShoppingCart className="w-5 h-5 text-secondary" />
                   </div>
                 </div>
-                <p className="text-2xl font-bold text-foreground">${mockStats.totalBought}</p>
+                <p className="text-2xl font-bold text-foreground">${stats.totalBought.toFixed(2)}</p>
                 <p className="text-sm text-muted-foreground">Total Bought</p>
               </div>
 
@@ -168,7 +144,7 @@ const Dashboard = () => {
                   </div>
                 </div>
                 <p className="text-2xl font-bold text-foreground">
-                  {mockStats.sellPending + mockStats.buyPending}
+                  {stats.sellPending + stats.buyPending}
                 </p>
                 <p className="text-sm text-muted-foreground">Pending Orders</p>
               </div>
@@ -181,14 +157,18 @@ const Dashboard = () => {
                   <TrendingUp className="w-5 h-5 text-primary" />
                   Sell Orders
                 </h3>
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-3 gap-4">
                   <div className="bg-status-pending/10 rounded-lg p-4 text-center">
-                    <p className="text-2xl font-bold text-status-pending">{mockStats.sellPending}</p>
+                    <p className="text-2xl font-bold text-status-pending">{stats.sellPending}</p>
                     <p className="text-sm text-muted-foreground">Pending</p>
                   </div>
                   <div className="bg-status-paid/10 rounded-lg p-4 text-center">
-                    <p className="text-2xl font-bold text-status-paid">{mockStats.sellPaid}</p>
+                    <p className="text-2xl font-bold text-status-paid">{stats.sellPaid}</p>
                     <p className="text-sm text-muted-foreground">Paid</p>
+                  </div>
+                  <div className="bg-status-completed/10 rounded-lg p-4 text-center">
+                    <p className="text-2xl font-bold text-status-completed">{stats.sellCompleted}</p>
+                    <p className="text-sm text-muted-foreground">Completed</p>
                   </div>
                 </div>
               </div>
@@ -200,11 +180,11 @@ const Dashboard = () => {
                 </h3>
                 <div className="grid grid-cols-2 gap-4">
                   <div className="bg-status-pending/10 rounded-lg p-4 text-center">
-                    <p className="text-2xl font-bold text-status-pending">{mockStats.buyPending}</p>
+                    <p className="text-2xl font-bold text-status-pending">{stats.buyPending}</p>
                     <p className="text-sm text-muted-foreground">Pending</p>
                   </div>
                   <div className="bg-status-completed/10 rounded-lg p-4 text-center">
-                    <p className="text-2xl font-bold text-status-completed">{mockStats.buyCompleted}</p>
+                    <p className="text-2xl font-bold text-status-completed">{stats.buyCompleted}</p>
                     <p className="text-sm text-muted-foreground">Completed</p>
                   </div>
                 </div>
@@ -233,49 +213,59 @@ const Dashboard = () => {
               </div>
 
               {/* Transactions List */}
-              <div className="space-y-3">
-                {filteredTransactions.map((txn) => (
-                  <div
-                    key={txn.id}
-                    className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 bg-muted/50 rounded-xl hover:bg-muted transition-colors"
-                  >
-                    <div className="flex items-center gap-4">
-                      <div
-                        className={`w-10 h-10 rounded-lg flex items-center justify-center ${
-                          txn.type === "sell" ? "bg-primary/10" : "bg-secondary/10"
-                        }`}
-                      >
-                        {txn.type === "sell" ? (
-                          <TrendingUp className="w-5 h-5 text-primary" />
-                        ) : (
-                          <TrendingDown className="w-5 h-5 text-secondary" />
-                        )}
+              {isLoading ? (
+                <div className="text-center py-8">
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  {filteredTransactions.map((txn: Transaction) => (
+                    <div
+                      key={txn.id}
+                      className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 bg-muted/50 rounded-xl hover:bg-muted transition-colors"
+                    >
+                      <div className="flex items-center gap-4">
+                        <div
+                          className={`w-10 h-10 rounded-lg flex items-center justify-center ${
+                            txn.type === "sell" ? "bg-primary/10" : "bg-secondary/10"
+                          }`}
+                        >
+                          {txn.type === "sell" ? (
+                            <TrendingUp className="w-5 h-5 text-primary" />
+                          ) : (
+                            <TrendingDown className="w-5 h-5 text-secondary" />
+                          )}
+                        </div>
+                        <div>
+                          <p className="font-medium text-foreground">
+                            {txn.type === "sell" ? "Sold" : "Bought"} {txn.card_name}
+                          </p>
+                          <p className="text-sm text-muted-foreground">
+                            {txn.id.slice(0, 8)} • {format(new Date(txn.created_at), "MMM d, yyyy")}
+                          </p>
+                        </div>
                       </div>
-                      <div>
-                        <p className="font-medium text-foreground">
-                          {txn.type === "sell" ? "Sold" : "Bought"} {txn.card} Card
-                        </p>
-                        <p className="text-sm text-muted-foreground">
-                          {txn.id} • {txn.date}
-                        </p>
+                      <div className="flex items-center gap-4 sm:gap-8">
+                        <div className="text-right">
+                          <p className="font-medium text-foreground">${Number(txn.amount).toFixed(2)}</p>
+                          <p className="text-sm text-muted-foreground">
+                            Qty: {txn.quantity}
+                          </p>
+                        </div>
+                        {getStatusBadge(txn.status)}
                       </div>
                     </div>
-                    <div className="flex items-center gap-4 sm:gap-8">
-                      <div className="text-right">
-                        <p className="font-medium text-foreground">${txn.amount}</p>
-                        <p className="text-sm text-muted-foreground">
-                          {txn.type === "sell" ? `→ $${txn.payout}` : `Paid $${txn.price}`}
-                        </p>
-                      </div>
-                      {getStatusBadge(txn.status)}
-                    </div>
-                  </div>
-                ))}
-              </div>
+                  ))}
+                </div>
+              )}
 
-              {filteredTransactions.length === 0 && (
+              {!isLoading && filteredTransactions.length === 0 && (
                 <div className="text-center py-8">
                   <p className="text-muted-foreground">No transactions found</p>
+                  <p className="text-sm text-muted-foreground mt-2">
+                    Start by <Link to="/buy" className="text-primary hover:underline">buying</Link> or{" "}
+                    <Link to="/sell" className="text-primary hover:underline">selling</Link> gift cards
+                  </p>
                 </div>
               )}
             </div>

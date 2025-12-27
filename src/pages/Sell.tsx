@@ -1,5 +1,5 @@
 import { useState, useMemo } from "react";
-import { useSearchParams, Link } from "react-router-dom";
+import { useSearchParams, Link, useNavigate } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
@@ -10,10 +10,13 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { giftCards, cardAmounts, paymentMethods, SELL_RATE } from "@/data/giftCards";
 import { ArrowRight, DollarSign, CreditCard, Calculator, CheckCircle } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/contexts/AuthContext";
+import { supabase } from "@/integrations/supabase/client";
 
 const Sell = () => {
   const [searchParams] = useSearchParams();
   const preselectedCard = searchParams.get("card") || "";
+  const navigate = useNavigate();
   
   const [selectedCard, setSelectedCard] = useState(preselectedCard);
   const [cardAmount, setCardAmount] = useState<number | "">("");
@@ -23,6 +26,7 @@ const Sell = () => {
   const [step, setStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
+  const { user } = useAuth();
 
   const selectedCardData = giftCards.find((c) => c.id === selectedCard);
 
@@ -43,17 +47,46 @@ const Sell = () => {
       return;
     }
 
+    if (!user) {
+      toast({
+        title: "Login Required",
+        description: "Please log in to sell gift cards.",
+        variant: "destructive",
+      });
+      navigate("/login");
+      return;
+    }
+
     setIsSubmitting(true);
 
-    // Simulate submission
-    setTimeout(() => {
+    try {
+      const { data, error } = await supabase.functions.invoke("create-sell-order", {
+        body: {
+          cardName: selectedCardData?.name,
+          amount: Number(cardAmount),
+          quantity,
+          paymentMethod,
+          paymentDetails,
+        },
+      });
+
+      if (error) throw error;
+
       toast({
         title: "Order Submitted!",
         description: "Please wait up to 1 hour for processing.",
       });
       setStep(4);
+    } catch (error) {
+      console.error("Sell order error:", error);
+      toast({
+        title: "Submission Failed",
+        description: "Unable to submit order. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
       setIsSubmitting(false);
-    }, 1500);
+    }
   };
 
   return (
@@ -299,6 +332,18 @@ const Sell = () => {
                   Review Order
                 </h2>
 
+                {!user && (
+                  <div className="bg-status-pending/10 border border-status-pending/20 rounded-xl p-4 mb-6">
+                    <p className="text-sm text-foreground">
+                      <strong>Note:</strong> You need to{" "}
+                      <Link to="/login" className="text-primary hover:underline">
+                        log in
+                      </Link>{" "}
+                      to submit a sell order.
+                    </p>
+                  </div>
+                )}
+
                 <div className="space-y-4 mb-6">
                   <div className="flex justify-between py-3 border-b border-border">
                     <span className="text-muted-foreground">Gift Card</span>
@@ -332,7 +377,7 @@ const Sell = () => {
                   </Button>
                   <Button
                     onClick={handleSubmit}
-                    disabled={isSubmitting}
+                    disabled={isSubmitting || !user}
                     className="flex-1 gap-2"
                     variant="gold"
                   >
