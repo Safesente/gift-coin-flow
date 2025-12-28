@@ -7,7 +7,8 @@ import {
   Users, 
   ArrowLeft,
   Shield,
-  Mail
+  Mail,
+  Globe
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -19,6 +20,7 @@ const navItems = [
   { href: "/admin", icon: LayoutDashboard, label: "Overview" },
   { href: "/admin/orders", icon: ShoppingCart, label: "Orders" },
   { href: "/admin/cards", icon: CreditCard, label: "Gift Cards" },
+  { href: "/admin/country-rates", icon: Globe, label: "Country Rates" },
   { href: "/admin/users", icon: Users, label: "Users" },
   { href: "/admin/email-marketing", icon: Mail, label: "Email Marketing" },
 ];
