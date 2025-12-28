@@ -7,12 +7,14 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { cardAmounts, paymentMethods, countries, cardFormats } from "@/data/giftCards";
+import { cardAmounts, paymentMethods, cardFormats } from "@/data/giftCards";
+import { countries, getCountryByCode } from "@/data/countries";
 import { ArrowRight, DollarSign, CreditCard, Calculator, CheckCircle, Loader2, Upload, X, Image as ImageIcon } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { useGiftCards } from "@/hooks/useAdmin";
+import { useCountryRateForCard } from "@/hooks/useCountryRates";
 
 const Sell = () => {
   const [searchParams] = useSearchParams();
@@ -38,7 +40,18 @@ const Sell = () => {
   const { user } = useAuth();
 
   const selectedCardData = giftCards.find((c) => c.id === selectedCard);
-  const sellRate = selectedCardData?.sell_rate ? selectedCardData.sell_rate / 100 : 0.47;
+  const selectedCountry = getCountryByCode(country);
+  
+  // Fetch country-specific rate
+  const { data: countryRate } = useCountryRateForCard(selectedCard || undefined, country || undefined);
+  
+  // Use country-specific rate if available, otherwise fall back to card's default rate
+  const sellRate = countryRate?.sell_rate 
+    ? countryRate.sell_rate / 100 
+    : (selectedCardData?.sell_rate ? selectedCardData.sell_rate / 100 : 0.47);
+  
+  const currencySymbol = countryRate?.currency_symbol || selectedCountry?.currency_symbol || "$";
+  const currencyCode = countryRate?.currency_code || selectedCountry?.currency_code || "USD";
 
   const calculation = useMemo(() => {
     if (!cardAmount || !quantity) return null;
@@ -223,7 +236,7 @@ const Sell = () => {
                 </p>
                 <div className="glass-card rounded-xl p-4 mb-6 text-left">
                   <p className="text-sm text-muted-foreground mb-1">Expected Payout</p>
-                  <p className="text-2xl font-bold text-primary">${calculation?.payout.toFixed(2)}</p>
+                  <p className="text-2xl font-bold text-primary">{currencySymbol}{calculation?.payout.toFixed(2)} {currencyCode}</p>
                 </div>
                 <Link to="/dashboard">
                   <Button className="w-full gap-2">
@@ -268,12 +281,29 @@ const Sell = () => {
                       <SelectContent>
                         {countries.map((c) => (
                           <SelectItem key={c.code} value={c.code}>
-                            {c.name}
+                            {c.name} ({c.currency_symbol} {c.currency_code})
                           </SelectItem>
                         ))}
                       </SelectContent>
                     </Select>
                   </div>
+
+                  {/* Show rate info when both card and country selected */}
+                  {selectedCard && country && (
+                    <div className="bg-muted/50 rounded-lg p-3 text-sm">
+                      <div className="flex justify-between items-center">
+                        <span className="text-muted-foreground">Current Sell Rate:</span>
+                        <span className="font-semibold text-primary">
+                          {(sellRate * 100).toFixed(0)}% ({currencyCode})
+                        </span>
+                      </div>
+                      {countryRate && (
+                        <p className="text-xs text-muted-foreground mt-1">
+                          Country-specific rate applied for {selectedCountry?.name}
+                        </p>
+                      )}
+                    </div>
+                  )}
 
                   <div className="space-y-2">
                     <Label>Card Format</Label>
@@ -295,7 +325,7 @@ const Sell = () => {
                   </div>
 
                   <div className="space-y-2">
-                    <Label>Card Amount ($)</Label>
+                    <Label>Card Amount ({currencySymbol})</Label>
                     <Select
                       value={cardAmount?.toString()}
                       onValueChange={(v) => setCardAmount(Number(v))}
@@ -306,7 +336,7 @@ const Sell = () => {
                       <SelectContent>
                         {cardAmounts.map((amount) => (
                           <SelectItem key={amount} value={amount.toString()}>
-                            ${amount}
+                            {currencySymbol}{amount}
                           </SelectItem>
                         ))}
                       </SelectContent>
@@ -381,17 +411,21 @@ const Sell = () => {
                     <div className="bg-accent rounded-xl p-4 border border-primary/20">
                       <div className="flex items-center gap-2 mb-3">
                         <Calculator className="w-4 h-4 text-primary" />
-                        <span className="text-sm font-medium text-foreground">Payout Estimate</span>
+                        <span className="text-sm font-medium text-foreground">Payout Estimate ({currencyCode})</span>
                       </div>
                       <div className="space-y-2 text-sm">
                         <div className="flex justify-between">
                           <span className="text-muted-foreground">Total Card Value:</span>
-                          <span className="font-medium">${calculation.totalValue}</span>
+                          <span className="font-medium">{currencySymbol}{calculation.totalValue}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-muted-foreground">Sell Rate:</span>
+                          <span className="font-medium">{(sellRate * 100).toFixed(0)}%</span>
                         </div>
                         <div className="border-t border-border pt-2 flex justify-between">
                           <span className="font-medium text-foreground">You Receive:</span>
                           <span className="font-bold text-primary text-lg">
-                            ${calculation.payout.toFixed(2)}
+                            {currencySymbol}{calculation.payout.toFixed(2)}
                           </span>
                         </div>
                       </div>
@@ -507,7 +541,7 @@ const Sell = () => {
                   <div className="flex justify-between py-3 border-b border-border">
                     <span className="text-muted-foreground">Country</span>
                     <span className="font-medium">
-                      {countries.find((c) => c.code === country)?.name}
+                      {selectedCountry?.name} ({currencyCode})
                     </span>
                   </div>
                   <div className="flex justify-between py-3 border-b border-border">
@@ -518,11 +552,15 @@ const Sell = () => {
                   </div>
                   <div className="flex justify-between py-3 border-b border-border">
                     <span className="text-muted-foreground">Card Amount</span>
-                    <span className="font-medium">${cardAmount} x {quantity}</span>
+                    <span className="font-medium">{currencySymbol}{cardAmount} x {quantity}</span>
                   </div>
                   <div className="flex justify-between py-3 border-b border-border">
                     <span className="text-muted-foreground">Total Value</span>
-                    <span className="font-medium">${calculation?.totalValue}</span>
+                    <span className="font-medium">{currencySymbol}{calculation?.totalValue}</span>
+                  </div>
+                  <div className="flex justify-between py-3 border-b border-border">
+                    <span className="text-muted-foreground">Sell Rate</span>
+                    <span className="font-medium">{(sellRate * 100).toFixed(0)}%</span>
                   </div>
                   <div className="flex justify-between py-3 border-b border-border">
                     <span className="text-muted-foreground">Gift Card Code</span>
@@ -548,7 +586,7 @@ const Sell = () => {
                   <div className="flex justify-between py-3">
                     <span className="font-semibold text-foreground">You Receive</span>
                     <span className="font-bold text-primary text-xl">
-                      ${calculation?.payout.toFixed(2)}
+                      {currencySymbol}{calculation?.payout.toFixed(2)} {currencyCode}
                     </span>
                   </div>
                 </div>

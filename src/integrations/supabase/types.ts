@@ -14,6 +14,53 @@ export type Database = {
   }
   public: {
     Tables: {
+      gift_card_country_rates: {
+        Row: {
+          buy_rate: number
+          country_code: string
+          country_name: string
+          created_at: string
+          currency_code: string
+          currency_symbol: string
+          gift_card_id: string
+          id: string
+          sell_rate: number
+          updated_at: string
+        }
+        Insert: {
+          buy_rate?: number
+          country_code: string
+          country_name: string
+          created_at?: string
+          currency_code: string
+          currency_symbol: string
+          gift_card_id: string
+          id?: string
+          sell_rate?: number
+          updated_at?: string
+        }
+        Update: {
+          buy_rate?: number
+          country_code?: string
+          country_name?: string
+          created_at?: string
+          currency_code?: string
+          currency_symbol?: string
+          gift_card_id?: string
+          id?: string
+          sell_rate?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "gift_card_country_rates_gift_card_id_fkey"
+            columns: ["gift_card_id"]
+            isOneToOne: false
+            referencedRelation: "gift_cards"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       gift_cards: {
         Row: {
           buy_rate: number
