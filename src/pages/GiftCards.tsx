@@ -19,7 +19,7 @@ const GiftCards = () => {
   return (
     <>
       <Helmet>
-        <title>All Gift Cards - gXchange | {giftCards.length}+ Brands Available</title>
+        <title>{`All Gift Cards - gXchange | ${giftCards.length}+ Brands Available`}</title>
         <meta
           name="description"
           content="Browse all gift cards available on gXchange. Amazon, Apple, Steam, Netflix, PlayStation, Xbox, and more brands with the best rates."
