@@ -58,10 +58,8 @@ export const BUY_RATE = 0.85; // 85%
 export const cardAmounts = [10, 15, 20, 25, 50, 100, 150, 200, 250, 500];
 
 export const paymentMethods = [
-  { id: "paypal", name: "PayPal", icon: "P" },
-  { id: "skrill", name: "Skrill", icon: "S" },
-  { id: "google-pay", name: "Google Pay", icon: "G" },
-  { id: "binance", name: "Binance Pay", icon: "B" },
+  { id: "paypal", name: "PayPal", logo: "/images/paypal-logo.png" },
+  { id: "binance", name: "Binance Pay", logo: "/images/binance-logo.jpg" },
 ];
 
 export const countries = [

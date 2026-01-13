@@ -181,7 +181,7 @@ const Sell = () => {
         <title>Sell Gift Cards - gXchange | Get Paid Instantly</title>
         <meta
           name="description"
-          content="Sell your gift cards on gXchange. Fast payout via PayPal, Skrill, Google Pay, or Binance."
+          content="Sell your gift cards on gXchange. Fast payout via PayPal or Binance Pay."
         />
       </Helmet>
 
@@ -467,8 +467,12 @@ const Sell = () => {
                               : "border-border hover:border-primary/50"
                           }`}
                         >
-                          <div className="w-10 h-10 rounded-lg bg-muted flex items-center justify-center mb-2">
-                            <span className="font-bold text-foreground">{method.icon}</span>
+                          <div className="w-10 h-10 rounded-lg bg-white flex items-center justify-center mb-2 overflow-hidden">
+                            <img 
+                              src={method.logo} 
+                              alt={method.name} 
+                              className="w-8 h-8 object-contain"
+                            />
                           </div>
                           <p className="font-medium text-foreground">{method.name}</p>
                         </button>

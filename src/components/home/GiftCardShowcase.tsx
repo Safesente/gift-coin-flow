@@ -38,9 +38,10 @@ const GiftCardShowcase = () => {
         {/* Gift Cards Grid */}
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4 mb-12">
           {displayCards.map((card) => (
-            <div
+            <Link
               key={card.id}
-              className="glass-card rounded-xl p-4 group cursor-pointer transition-all duration-300 hover:shadow-medium hover:-translate-y-1"
+              to={`/sell?card=${card.id}`}
+              className="glass-card rounded-xl p-4 group cursor-pointer transition-all duration-300 hover:shadow-medium hover:-translate-y-1 block"
             >
               <div className="w-12 h-12 rounded-xl bg-background/80 border border-border/50 flex items-center justify-center mb-3 transition-transform duration-300 group-hover:scale-110 overflow-hidden">
                 {card.logo_url ? (
@@ -65,7 +66,7 @@ const GiftCardShowcase = () => {
                 )}
               </div>
               <p className="text-sm font-medium text-foreground truncate">{card.name}</p>
-            </div>
+            </Link>
           ))}
         </div>
 
