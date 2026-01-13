@@ -25,6 +25,8 @@ import AdminEmailMarketing from "./pages/admin/AdminEmailMarketing";
 import AdminCountryRates from "./pages/admin/AdminCountryRates";
 import AdminSupport from "./pages/admin/AdminSupport";
 import AdminContacts from "./pages/admin/AdminContacts";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
+import TermsOfService from "./pages/TermsOfService";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -47,6 +49,8 @@ const App = () => (
               <Route path="/help" element={<HelpCenter />} />
               <Route path="/contact" element={<ContactUs />} />
               <Route path="/faq" element={<FAQ />} />
+              <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+              <Route path="/terms-of-service" element={<TermsOfService />} />
               <Route
                 path="/dashboard"
                 element={
