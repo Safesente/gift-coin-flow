@@ -139,6 +139,8 @@ export type Database = {
           country: string | null
           created_at: string
           id: string
+          payment_details: string | null
+          payment_method: string | null
           quantity: number
           screenshot_url: string | null
           status: Database["public"]["Enums"]["transaction_status"]
@@ -155,6 +157,8 @@ export type Database = {
           country?: string | null
           created_at?: string
           id?: string
+          payment_details?: string | null
+          payment_method?: string | null
           quantity?: number
           screenshot_url?: string | null
           status?: Database["public"]["Enums"]["transaction_status"]
@@ -171,6 +175,8 @@ export type Database = {
           country?: string | null
           created_at?: string
           id?: string
+          payment_details?: string | null
+          payment_method?: string | null
           quantity?: number
           screenshot_url?: string | null
           status?: Database["public"]["Enums"]["transaction_status"]
