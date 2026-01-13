@@ -6,11 +6,11 @@ import Footer from "@/components/layout/Footer";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Search, TrendingUp, TrendingDown, Loader2 } from "lucide-react";
-import { useGiftCards } from "@/hooks/useAdmin";
+import { usePublicGiftCards } from "@/hooks/useAdmin";
 
 const GiftCards = () => {
   const [searchQuery, setSearchQuery] = useState("");
-  const { data: giftCards = [], isLoading } = useGiftCards(false);
+  const { data: giftCards = [], isLoading } = usePublicGiftCards();
 
   const filteredCards = giftCards.filter((card) => {
     return card.name.toLowerCase().includes(searchQuery.toLowerCase());
