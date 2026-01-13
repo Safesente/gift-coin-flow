@@ -12,6 +12,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
+import { Card, CardContent } from "@/components/ui/card";
 import {
   Dialog,
   DialogContent,
@@ -61,7 +62,6 @@ export function OrdersTable({ transactions, profiles, filter = "all", type = "al
     try {
       await updateTransaction.mutateAsync({ id: transaction.id, status: "completed" });
       
-      // Send order notification email
       if (profile?.email) {
         supabase.functions.invoke("send-order-notification", {
           body: {
@@ -88,7 +88,6 @@ export function OrdersTable({ transactions, profiles, filter = "all", type = "al
     try {
       await updateTransaction.mutateAsync({ id: transaction.id, status: "cancelled" });
       
-      // Send cancellation notification email
       if (profile?.email) {
         supabase.functions.invoke("send-order-notification", {
           body: {
@@ -162,9 +161,9 @@ export function OrdersTable({ transactions, profiles, filter = "all", type = "al
     return countries.find((c) => c.code === code)?.name || code;
   };
 
-  const getFormatName = (format: string | null) => {
-    if (!format) return "-";
-    return cardFormats.find((f) => f.id === format)?.name || format;
+  const getFormatName = (formatCode: string | null) => {
+    if (!formatCode) return "-";
+    return cardFormats.find((f) => f.id === formatCode)?.name || formatCode;
   };
 
   if (filteredTransactions.length === 0) {
@@ -175,25 +174,181 @@ export function OrdersTable({ transactions, profiles, filter = "all", type = "al
     );
   }
 
+  // Mobile Card View
+  const MobileOrderCard = ({ transaction }: { transaction: AdminTransaction }) => {
+    const profile = profiles[transaction.user_id];
+    const isCodeRevealed = revealedCodes.has(transaction.id);
+
+    return (
+      <Card className="mb-3">
+        <CardContent className="p-4 space-y-3">
+          {/* Header: User & Date */}
+          <div className="flex items-start justify-between">
+            <div className="min-w-0 flex-1">
+              <p className="font-medium text-sm truncate">
+                {profile?.full_name || "Unknown"}
+              </p>
+              <p className="text-xs text-muted-foreground truncate">
+                {profile?.email || "No email"}
+              </p>
+            </div>
+            <Badge className={statusColors[transaction.status]} variant="outline">
+              {transaction.status}
+            </Badge>
+          </div>
+
+          {/* Card Details */}
+          <div className="grid grid-cols-2 gap-2 text-sm">
+            <div>
+              <p className="text-muted-foreground text-xs">Card</p>
+              <p className="font-medium">{transaction.card_name}</p>
+            </div>
+            <div>
+              <p className="text-muted-foreground text-xs">Type</p>
+              <Badge variant={transaction.type === "buy" ? "default" : "secondary"} className="mt-0.5">
+                {transaction.type}
+              </Badge>
+            </div>
+            <div>
+              <p className="text-muted-foreground text-xs">Amount</p>
+              <p className="font-medium">${Number(transaction.amount).toFixed(2)}</p>
+            </div>
+            <div>
+              <p className="text-muted-foreground text-xs">Qty</p>
+              <p className="font-medium">{transaction.quantity}</p>
+            </div>
+            <div>
+              <p className="text-muted-foreground text-xs">Country</p>
+              <p className="text-sm">{getCountryName(transaction.country)}</p>
+            </div>
+            <div>
+              <p className="text-muted-foreground text-xs">Format</p>
+              <p className="text-sm">{getFormatName(transaction.card_format)}</p>
+            </div>
+          </div>
+
+          {/* Payment Info */}
+          {transaction.type === "sell" && transaction.payment_method && (
+            <div className="pt-2 border-t">
+              <p className="text-muted-foreground text-xs mb-1">Payment</p>
+              <div className="flex items-center gap-2">
+                <Wallet className="h-3 w-3 text-muted-foreground" />
+                <span className="text-sm font-medium capitalize">{transaction.payment_method}</span>
+                {transaction.payment_details && (
+                  <span className="text-xs text-muted-foreground truncate flex-1">
+                    {transaction.payment_details}
+                  </span>
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* Code */}
+          {transaction.code && (
+            <div className="pt-2 border-t">
+              <p className="text-muted-foreground text-xs mb-1">Code</p>
+              <div className="flex items-center gap-2">
+                <code className="text-xs bg-muted px-2 py-1 rounded font-mono flex-1 truncate">
+                  {isCodeRevealed ? transaction.code : "••••••••"}
+                </code>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-7 w-7"
+                  onClick={() => toggleRevealCode(transaction.id)}
+                >
+                  {isCodeRevealed ? <EyeOff className="h-3 w-3" /> : <Eye className="h-3 w-3" />}
+                </Button>
+              </div>
+            </div>
+          )}
+
+          {/* Date & Actions */}
+          <div className="flex items-center justify-between pt-2 border-t">
+            <p className="text-xs text-muted-foreground">
+              {format(new Date(transaction.created_at), "MMM d, yyyy HH:mm")}
+            </p>
+            <div className="flex items-center gap-1">
+              {transaction.screenshot_url && (
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-8 w-8"
+                  onClick={() => handleViewScreenshot(transaction)}
+                >
+                  <ImageIcon className="h-4 w-4 text-primary" />
+                </Button>
+              )}
+              {transaction.type === "buy" && (
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-8 w-8"
+                  onClick={() => handleAddCode(transaction)}
+                >
+                  <Key className="h-4 w-4" />
+                </Button>
+              )}
+              {transaction.status === "pending" && (
+                <>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-8 w-8 text-green-600 hover:text-green-700 hover:bg-green-50"
+                    onClick={() => handleApprove(transaction)}
+                    disabled={updateTransaction.isPending}
+                  >
+                    {updateTransaction.isPending ? (
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                    ) : (
+                      <Check className="h-4 w-4" />
+                    )}
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-8 w-8 text-red-600 hover:text-red-700 hover:bg-red-50"
+                    onClick={() => handleReject(transaction)}
+                    disabled={updateTransaction.isPending}
+                  >
+                    <X className="h-4 w-4" />
+                  </Button>
+                </>
+              )}
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  };
+
   return (
     <>
-      <div className="rounded-lg border bg-card overflow-x-auto">
+      {/* Mobile View */}
+      <div className="md:hidden space-y-3">
+        {filteredTransactions.map((transaction) => (
+          <MobileOrderCard key={transaction.id} transaction={transaction} />
+        ))}
+      </div>
+
+      {/* Desktop Table View */}
+      <div className="hidden md:block rounded-lg border bg-card overflow-x-auto">
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Date</TableHead>
-              <TableHead>User</TableHead>
-              <TableHead>Type</TableHead>
-              <TableHead>Card</TableHead>
-              <TableHead>Country</TableHead>
-              <TableHead>Format</TableHead>
-              <TableHead>Amount</TableHead>
-              <TableHead>Qty</TableHead>
-              <TableHead>Payment</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead>Code</TableHead>
-              <TableHead>Screenshot</TableHead>
-              <TableHead className="text-right">Actions</TableHead>
+              <TableHead className="whitespace-nowrap">Date</TableHead>
+              <TableHead className="whitespace-nowrap">User</TableHead>
+              <TableHead className="whitespace-nowrap">Type</TableHead>
+              <TableHead className="whitespace-nowrap">Card</TableHead>
+              <TableHead className="whitespace-nowrap">Country</TableHead>
+              <TableHead className="whitespace-nowrap">Format</TableHead>
+              <TableHead className="whitespace-nowrap">Amount</TableHead>
+              <TableHead className="whitespace-nowrap">Qty</TableHead>
+              <TableHead className="whitespace-nowrap">Payment</TableHead>
+              <TableHead className="whitespace-nowrap">Status</TableHead>
+              <TableHead className="whitespace-nowrap">Code</TableHead>
+              <TableHead className="whitespace-nowrap">Screenshot</TableHead>
+              <TableHead className="text-right whitespace-nowrap">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -342,7 +497,7 @@ export function OrdersTable({ transactions, profiles, filter = "all", type = "al
 
       {/* Code Dialog */}
       <Dialog open={codeDialogOpen} onOpenChange={setCodeDialogOpen}>
-        <DialogContent>
+        <DialogContent className="sm:max-w-md">
           <DialogHeader>
             <DialogTitle>Add Gift Card Code</DialogTitle>
             <DialogDescription>
@@ -356,11 +511,11 @@ export function OrdersTable({ transactions, profiles, filter = "all", type = "al
               onChange={(e) => setNewCode(e.target.value)}
             />
           </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setCodeDialogOpen(false)}>
+          <DialogFooter className="flex-col sm:flex-row gap-2">
+            <Button variant="outline" onClick={() => setCodeDialogOpen(false)} className="w-full sm:w-auto">
               Cancel
             </Button>
-            <Button onClick={handleSaveCode} disabled={updateTransaction.isPending}>
+            <Button onClick={handleSaveCode} disabled={updateTransaction.isPending} className="w-full sm:w-auto">
               {updateTransaction.isPending && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
               Save Code
             </Button>
@@ -370,7 +525,7 @@ export function OrdersTable({ transactions, profiles, filter = "all", type = "al
 
       {/* Screenshot Dialog */}
       <Dialog open={imageDialogOpen} onOpenChange={setImageDialogOpen}>
-        <DialogContent className="max-w-3xl">
+        <DialogContent className="max-w-[95vw] sm:max-w-3xl">
           <DialogHeader>
             <DialogTitle>Gift Card Screenshot</DialogTitle>
             <DialogDescription>
@@ -387,7 +542,7 @@ export function OrdersTable({ transactions, profiles, filter = "all", type = "al
             )}
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setImageDialogOpen(false)}>
+            <Button variant="outline" onClick={() => setImageDialogOpen(false)} className="w-full sm:w-auto">
               Close
             </Button>
           </DialogFooter>
