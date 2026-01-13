@@ -101,132 +101,134 @@ const Dashboard = () => {
       <div className="min-h-screen bg-gradient-hero">
         <Header />
 
-        <main className="pt-24 pb-16">
-          <div className="container mx-auto">
+        <main className="pt-20 md:pt-24 pb-16">
+          <div className="container mx-auto px-4">
             {/* Welcome Header */}
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+            <div className="flex flex-col gap-4 mb-6 md:mb-8">
               <div>
-                <h1 className="text-2xl md:text-3xl font-bold text-foreground">
+                <h1 className="text-xl md:text-2xl lg:text-3xl font-bold text-foreground">
                   Welcome back{profile?.full_name ? `, ${profile.full_name}` : ""}!
                 </h1>
-                <p className="text-muted-foreground">{user?.email}</p>
+                <p className="text-muted-foreground text-sm md:text-base truncate">{user?.email}</p>
               </div>
-              <div className="flex gap-3">
+              <div className="flex flex-wrap gap-2 md:gap-3">
                 <Link to="/sell">
-                  <Button variant="outline" className="gap-2">
+                  <Button variant="outline" size="sm" className="gap-2">
                     <TrendingUp className="w-4 h-4" />
-                    Sell Cards
+                    <span className="hidden sm:inline">Sell Cards</span>
+                    <span className="sm:hidden">Sell</span>
                   </Button>
                 </Link>
                 <Link to="/buy">
-                  <Button className="gap-2">
+                  <Button size="sm" className="gap-2">
                     <TrendingDown className="w-4 h-4" />
-                    Buy Cards
+                    <span className="hidden sm:inline">Buy Cards</span>
+                    <span className="sm:hidden">Buy</span>
                   </Button>
                 </Link>
-                <Button variant="ghost" onClick={handleSignOut} className="gap-2">
+                <Button variant="ghost" size="sm" onClick={handleSignOut} className="gap-2">
                   <LogOut className="w-4 h-4" />
-                  Sign Out
+                  <span className="hidden sm:inline">Sign Out</span>
                 </Button>
               </div>
             </div>
 
             {/* Stats Grid */}
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-              <div className="glass-card rounded-xl p-5">
-                <div className="flex items-center gap-3 mb-3">
-                  <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
-                    <CreditCard className="w-5 h-5 text-primary" />
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4 mb-6 md:mb-8">
+              <div className="glass-card rounded-xl p-4 md:p-5">
+                <div className="flex items-center gap-2 md:gap-3 mb-2 md:mb-3">
+                  <div className="w-8 h-8 md:w-10 md:h-10 rounded-lg bg-primary/10 flex items-center justify-center">
+                    <CreditCard className="w-4 h-4 md:w-5 md:h-5 text-primary" />
                   </div>
                 </div>
-                <p className="text-2xl font-bold text-foreground">{stats.totalTransactions}</p>
-                <p className="text-sm text-muted-foreground">Total Transactions</p>
+                <p className="text-xl md:text-2xl font-bold text-foreground">{stats.totalTransactions}</p>
+                <p className="text-xs md:text-sm text-muted-foreground">Total Transactions</p>
               </div>
 
-              <div className="glass-card rounded-xl p-5">
-                <div className="flex items-center gap-3 mb-3">
-                  <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
-                    <TrendingUp className="w-5 h-5 text-primary" />
+              <div className="glass-card rounded-xl p-4 md:p-5">
+                <div className="flex items-center gap-2 md:gap-3 mb-2 md:mb-3">
+                  <div className="w-8 h-8 md:w-10 md:h-10 rounded-lg bg-primary/10 flex items-center justify-center">
+                    <TrendingUp className="w-4 h-4 md:w-5 md:h-5 text-primary" />
                   </div>
                 </div>
-                <p className="text-2xl font-bold text-foreground">${stats.totalSold.toFixed(2)}</p>
-                <p className="text-sm text-muted-foreground">Total Sold</p>
+                <p className="text-xl md:text-2xl font-bold text-foreground">${stats.totalSold.toFixed(2)}</p>
+                <p className="text-xs md:text-sm text-muted-foreground">Total Sold</p>
               </div>
 
-              <div className="glass-card rounded-xl p-5">
-                <div className="flex items-center gap-3 mb-3">
-                  <div className="w-10 h-10 rounded-lg bg-secondary/10 flex items-center justify-center">
-                    <ShoppingCart className="w-5 h-5 text-secondary" />
+              <div className="glass-card rounded-xl p-4 md:p-5">
+                <div className="flex items-center gap-2 md:gap-3 mb-2 md:mb-3">
+                  <div className="w-8 h-8 md:w-10 md:h-10 rounded-lg bg-secondary/10 flex items-center justify-center">
+                    <ShoppingCart className="w-4 h-4 md:w-5 md:h-5 text-secondary" />
                   </div>
                 </div>
-                <p className="text-2xl font-bold text-foreground">${stats.totalBought.toFixed(2)}</p>
-                <p className="text-sm text-muted-foreground">Total Bought</p>
+                <p className="text-xl md:text-2xl font-bold text-foreground">${stats.totalBought.toFixed(2)}</p>
+                <p className="text-xs md:text-sm text-muted-foreground">Total Bought</p>
               </div>
 
-              <div className="glass-card rounded-xl p-5">
-                <div className="flex items-center gap-3 mb-3">
-                  <div className="w-10 h-10 rounded-lg bg-status-pending/10 flex items-center justify-center">
-                    <Clock className="w-5 h-5 text-status-pending" />
+              <div className="glass-card rounded-xl p-4 md:p-5">
+                <div className="flex items-center gap-2 md:gap-3 mb-2 md:mb-3">
+                  <div className="w-8 h-8 md:w-10 md:h-10 rounded-lg bg-status-pending/10 flex items-center justify-center">
+                    <Clock className="w-4 h-4 md:w-5 md:h-5 text-status-pending" />
                   </div>
                 </div>
-                <p className="text-2xl font-bold text-foreground">
+                <p className="text-xl md:text-2xl font-bold text-foreground">
                   {stats.sellPending + stats.buyPending}
                 </p>
-                <p className="text-sm text-muted-foreground">Pending Orders</p>
+                <p className="text-xs md:text-sm text-muted-foreground">Pending Orders</p>
               </div>
             </div>
 
             {/* Quick Stats Cards */}
-            <div className="grid md:grid-cols-2 gap-4 mb-8">
-              <div className="glass-card rounded-xl p-6">
-                <h3 className="font-semibold text-foreground mb-4 flex items-center gap-2">
-                  <TrendingUp className="w-5 h-5 text-primary" />
+            <div className="grid md:grid-cols-2 gap-3 md:gap-4 mb-6 md:mb-8">
+              <div className="glass-card rounded-xl p-4 md:p-6">
+                <h3 className="font-semibold text-foreground mb-3 md:mb-4 flex items-center gap-2 text-sm md:text-base">
+                  <TrendingUp className="w-4 h-4 md:w-5 md:h-5 text-primary" />
                   Sell Orders
                 </h3>
-                <div className="grid grid-cols-3 gap-4">
-                  <div className="bg-status-pending/10 rounded-lg p-4 text-center">
-                    <p className="text-2xl font-bold text-status-pending">{stats.sellPending}</p>
-                    <p className="text-sm text-muted-foreground">Pending</p>
+                <div className="grid grid-cols-3 gap-2 md:gap-4">
+                  <div className="bg-status-pending/10 rounded-lg p-2 md:p-4 text-center">
+                    <p className="text-lg md:text-2xl font-bold text-status-pending">{stats.sellPending}</p>
+                    <p className="text-xs md:text-sm text-muted-foreground">Pending</p>
                   </div>
-                  <div className="bg-status-paid/10 rounded-lg p-4 text-center">
-                    <p className="text-2xl font-bold text-status-paid">{stats.sellPaid}</p>
-                    <p className="text-sm text-muted-foreground">Paid</p>
+                  <div className="bg-status-paid/10 rounded-lg p-2 md:p-4 text-center">
+                    <p className="text-lg md:text-2xl font-bold text-status-paid">{stats.sellPaid}</p>
+                    <p className="text-xs md:text-sm text-muted-foreground">Paid</p>
                   </div>
-                  <div className="bg-status-completed/10 rounded-lg p-4 text-center">
-                    <p className="text-2xl font-bold text-status-completed">{stats.sellCompleted}</p>
-                    <p className="text-sm text-muted-foreground">Completed</p>
+                  <div className="bg-status-completed/10 rounded-lg p-2 md:p-4 text-center">
+                    <p className="text-lg md:text-2xl font-bold text-status-completed">{stats.sellCompleted}</p>
+                    <p className="text-xs md:text-sm text-muted-foreground">Completed</p>
                   </div>
                 </div>
               </div>
 
-              <div className="glass-card rounded-xl p-6">
-                <h3 className="font-semibold text-foreground mb-4 flex items-center gap-2">
-                  <ShoppingCart className="w-5 h-5 text-secondary" />
+              <div className="glass-card rounded-xl p-4 md:p-6">
+                <h3 className="font-semibold text-foreground mb-3 md:mb-4 flex items-center gap-2 text-sm md:text-base">
+                  <ShoppingCart className="w-4 h-4 md:w-5 md:h-5 text-secondary" />
                   Buy Orders
                 </h3>
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="bg-status-pending/10 rounded-lg p-4 text-center">
-                    <p className="text-2xl font-bold text-status-pending">{stats.buyPending}</p>
-                    <p className="text-sm text-muted-foreground">Pending</p>
+                <div className="grid grid-cols-2 gap-2 md:gap-4">
+                  <div className="bg-status-pending/10 rounded-lg p-2 md:p-4 text-center">
+                    <p className="text-lg md:text-2xl font-bold text-status-pending">{stats.buyPending}</p>
+                    <p className="text-xs md:text-sm text-muted-foreground">Pending</p>
                   </div>
-                  <div className="bg-status-completed/10 rounded-lg p-4 text-center">
-                    <p className="text-2xl font-bold text-status-completed">{stats.buyCompleted}</p>
-                    <p className="text-sm text-muted-foreground">Completed</p>
+                  <div className="bg-status-completed/10 rounded-lg p-2 md:p-4 text-center">
+                    <p className="text-lg md:text-2xl font-bold text-status-completed">{stats.buyCompleted}</p>
+                    <p className="text-xs md:text-sm text-muted-foreground">Completed</p>
                   </div>
                 </div>
               </div>
             </div>
 
             {/* Transaction History */}
-            <div className="glass-card rounded-xl p-6">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
-                <h3 className="font-semibold text-foreground">Transaction History</h3>
-                <div className="flex gap-2">
+            <div className="glass-card rounded-xl p-4 md:p-6">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 md:gap-4 mb-4 md:mb-6">
+                <h3 className="font-semibold text-foreground text-sm md:text-base">Transaction History</h3>
+                <div className="flex gap-1 md:gap-2 overflow-x-auto">
                   {(["all", "sell", "buy"] as const).map((tab) => (
                     <button
                       key={tab}
                       onClick={() => setActiveTab(tab)}
-                      className={`px-4 py-2 rounded-lg text-sm font-medium transition-all capitalize ${
+                      className={`px-3 md:px-4 py-1.5 md:py-2 rounded-lg text-xs md:text-sm font-medium transition-all capitalize whitespace-nowrap ${
                         activeTab === tab
                           ? "bg-primary text-primary-foreground"
                           : "bg-muted text-muted-foreground hover:bg-accent"

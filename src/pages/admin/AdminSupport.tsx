@@ -180,23 +180,23 @@ export default function AdminSupport() {
 
   return (
     <AdminLayout>
-      <div className="space-y-6">
+      <div className="space-y-4 md:space-y-6">
         <div>
-          <h1 className="text-3xl font-bold">Support Chat</h1>
-          <p className="text-muted-foreground">Manage customer support conversations</p>
+          <h1 className="text-2xl md:text-3xl font-bold">Support Chat</h1>
+          <p className="text-muted-foreground text-sm md:text-base">Manage customer support conversations</p>
         </div>
 
-        <div className="grid lg:grid-cols-3 gap-6 h-[600px]">
+        <div className="grid lg:grid-cols-3 gap-4 md:gap-6 h-[calc(100vh-12rem)] md:h-[600px]">
           {/* Users List */}
-          <Card className="lg:col-span-1">
-            <CardHeader className="pb-3">
-              <CardTitle className="text-lg flex items-center gap-2">
+          <Card className={`lg:col-span-1 ${selectedUser ? 'hidden lg:flex' : 'flex'} flex-col`}>
+            <CardHeader className="pb-3 flex-shrink-0">
+              <CardTitle className="text-base md:text-lg flex items-center gap-2">
                 <User className="w-4 h-4" />
                 Conversations
               </CardTitle>
             </CardHeader>
-            <CardContent className="p-0">
-              <ScrollArea className="h-[500px]">
+            <CardContent className="p-0 flex-1 overflow-hidden">
+              <ScrollArea className="h-full max-h-[400px] lg:max-h-none">
                 {loadingUsers ? (
                   <div className="flex items-center justify-center py-8">
                     <Loader2 className="w-6 h-6 animate-spin text-muted-foreground" />
@@ -244,14 +244,24 @@ export default function AdminSupport() {
           </Card>
 
           {/* Chat Area */}
-          <Card className="lg:col-span-2 flex flex-col">
+          <Card className={`lg:col-span-2 flex-col ${selectedUser ? 'flex' : 'hidden lg:flex'}`}>
             {selectedUser ? (
               <>
-                <CardHeader className="border-b pb-3">
-                  <CardTitle className="text-lg flex items-center gap-2">
-                    <MessageCircle className="w-4 h-4 text-primary" />
-                    {selectedUser.full_name || selectedUser.email || 'Unknown User'}
-                  </CardTitle>
+                <CardHeader className="border-b pb-3 flex-shrink-0">
+                  <div className="flex items-center justify-between">
+                    <CardTitle className="text-base md:text-lg flex items-center gap-2">
+                      <MessageCircle className="w-4 h-4 text-primary" />
+                      <span className="truncate">{selectedUser.full_name || selectedUser.email || 'Unknown User'}</span>
+                    </CardTitle>
+                    <Button 
+                      variant="ghost" 
+                      size="sm" 
+                      className="lg:hidden"
+                      onClick={() => setSelectedUser(null)}
+                    >
+                      Back
+                    </Button>
+                  </div>
                 </CardHeader>
                 <CardContent className="flex-1 flex flex-col p-0">
                   <ScrollArea className="flex-1 p-4">

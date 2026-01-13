@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { format } from "date-fns";
-import { ChevronDown, ChevronUp, Eye, Loader2 } from "lucide-react";
+import { ChevronDown, ChevronUp, Eye } from "lucide-react";
 import {
   Table,
   TableBody,
@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Card, CardContent } from "@/components/ui/card";
 import {
   Dialog,
   DialogContent,
@@ -81,28 +82,89 @@ export function UsersTable({ profiles, roles, transactions }: UsersTableProps) {
     ? getRolesForUser(selectedUser.user_id) 
     : [];
 
+  // Mobile User Card
+  const MobileUserCard = ({ profile }: { profile: UserProfile }) => {
+    const userRoles = getRolesForUser(profile.user_id);
+    const userTransactions = getTransactionsForUser(profile.user_id);
+
+    return (
+      <Card className="mb-3">
+        <CardContent className="p-4">
+          <div className="flex items-start justify-between gap-3">
+            <div className="min-w-0 flex-1">
+              <p className="font-medium truncate">{profile.email || "No email"}</p>
+              <p className="text-sm text-muted-foreground truncate">
+                {profile.full_name || "No name"}
+              </p>
+            </div>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-8 w-8 flex-shrink-0"
+              onClick={() => handleViewUser(profile)}
+            >
+              <Eye className="h-4 w-4" />
+            </Button>
+          </div>
+          
+          <div className="flex items-center justify-between mt-3 pt-3 border-t">
+            <div className="flex gap-1 flex-wrap">
+              {userRoles.length > 0 ? (
+                userRoles.map((role) => (
+                  <Badge 
+                    key={role} 
+                    variant={role === "admin" ? "default" : "secondary"}
+                    className="text-xs"
+                  >
+                    {role}
+                  </Badge>
+                ))
+              ) : (
+                <span className="text-muted-foreground text-xs">No roles</span>
+              )}
+            </div>
+            <div className="text-right">
+              <p className="text-sm font-medium">{userTransactions.length} orders</p>
+              <p className="text-xs text-muted-foreground">
+                {format(new Date(profile.created_at), "MMM d, yyyy")}
+              </p>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  };
+
   return (
     <>
-      <div className="rounded-lg border bg-card">
+      {/* Mobile View */}
+      <div className="md:hidden space-y-3">
+        {sortedProfiles.map((profile) => (
+          <MobileUserCard key={profile.id} profile={profile} />
+        ))}
+      </div>
+
+      {/* Desktop Table View */}
+      <div className="hidden md:block rounded-lg border bg-card overflow-x-auto">
         <Table>
           <TableHeader>
             <TableRow>
               <TableHead 
-                className="cursor-pointer hover:bg-muted/50"
+                className="cursor-pointer hover:bg-muted/50 whitespace-nowrap"
                 onClick={() => handleSort("email")}
               >
                 User <SortIcon column="email" />
               </TableHead>
-              <TableHead>Name</TableHead>
-              <TableHead>Roles</TableHead>
-              <TableHead>Transactions</TableHead>
+              <TableHead className="whitespace-nowrap">Name</TableHead>
+              <TableHead className="whitespace-nowrap">Roles</TableHead>
+              <TableHead className="whitespace-nowrap">Transactions</TableHead>
               <TableHead 
-                className="cursor-pointer hover:bg-muted/50"
+                className="cursor-pointer hover:bg-muted/50 whitespace-nowrap"
                 onClick={() => handleSort("created_at")}
               >
                 Joined <SortIcon column="created_at" />
               </TableHead>
-              <TableHead className="text-right">Actions</TableHead>
+              <TableHead className="text-right whitespace-nowrap">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -161,7 +223,7 @@ export function UsersTable({ profiles, roles, transactions }: UsersTableProps) {
       </div>
 
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-        <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
+        <DialogContent className="max-w-[95vw] sm:max-w-2xl max-h-[85vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>User Details</DialogTitle>
             <DialogDescription>
@@ -172,10 +234,10 @@ export function UsersTable({ profiles, roles, transactions }: UsersTableProps) {
           {selectedUser && (
             <div className="space-y-6">
               {/* User Info */}
-              <div className="grid grid-cols-2 gap-4 p-4 rounded-lg bg-muted/50">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 p-4 rounded-lg bg-muted/50">
                 <div>
                   <p className="text-sm text-muted-foreground">Email</p>
-                  <p className="font-medium">{selectedUser.email || "No email"}</p>
+                  <p className="font-medium break-all">{selectedUser.email || "No email"}</p>
                 </div>
                 <div>
                   <p className="text-sm text-muted-foreground">Full Name</p>
@@ -189,7 +251,7 @@ export function UsersTable({ profiles, roles, transactions }: UsersTableProps) {
                 </div>
                 <div>
                   <p className="text-sm text-muted-foreground">Roles</p>
-                  <div className="flex gap-1 mt-1">
+                  <div className="flex gap-1 mt-1 flex-wrap">
                     {selectedUserRoles.length > 0 ? (
                       selectedUserRoles.map((role) => (
                         <Badge key={role} variant={role === "admin" ? "default" : "secondary"}>
@@ -207,21 +269,21 @@ export function UsersTable({ profiles, roles, transactions }: UsersTableProps) {
               <div>
                 <h3 className="font-semibold mb-3">Transaction History ({selectedUserTransactions.length})</h3>
                 {selectedUserTransactions.length > 0 ? (
-                  <div className="rounded-lg border">
+                  <div className="rounded-lg border overflow-x-auto">
                     <Table>
                       <TableHeader>
                         <TableRow>
-                          <TableHead>Date</TableHead>
-                          <TableHead>Type</TableHead>
-                          <TableHead>Card</TableHead>
-                          <TableHead>Amount</TableHead>
-                          <TableHead>Status</TableHead>
+                          <TableHead className="whitespace-nowrap">Date</TableHead>
+                          <TableHead className="whitespace-nowrap">Type</TableHead>
+                          <TableHead className="whitespace-nowrap">Card</TableHead>
+                          <TableHead className="whitespace-nowrap">Amount</TableHead>
+                          <TableHead className="whitespace-nowrap">Status</TableHead>
                         </TableRow>
                       </TableHeader>
                       <TableBody>
                         {selectedUserTransactions.map((t) => (
                           <TableRow key={t.id}>
-                            <TableCell className="text-sm">
+                            <TableCell className="text-sm whitespace-nowrap">
                               {format(new Date(t.created_at), "MMM d, yyyy")}
                             </TableCell>
                             <TableCell>
@@ -229,8 +291,8 @@ export function UsersTable({ profiles, roles, transactions }: UsersTableProps) {
                                 {t.type}
                               </Badge>
                             </TableCell>
-                            <TableCell>{t.card_name}</TableCell>
-                            <TableCell>${Number(t.amount).toFixed(2)}</TableCell>
+                            <TableCell className="whitespace-nowrap">{t.card_name}</TableCell>
+                            <TableCell className="whitespace-nowrap">${Number(t.amount).toFixed(2)}</TableCell>
                             <TableCell>
                               <Badge variant="outline">{t.status}</Badge>
                             </TableCell>
