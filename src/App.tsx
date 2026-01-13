@@ -14,12 +14,17 @@ import GiftCards from "./pages/GiftCards";
 import Sell from "./pages/Sell";
 import Buy from "./pages/Buy";
 import Dashboard from "./pages/Dashboard";
+import HelpCenter from "./pages/HelpCenter";
+import ContactUs from "./pages/ContactUs";
+import FAQ from "./pages/FAQ";
 import AdminOverview from "./pages/admin/AdminOverview";
 import AdminOrders from "./pages/admin/AdminOrders";
 import AdminCards from "./pages/admin/AdminCards";
 import AdminUsers from "./pages/admin/AdminUsers";
 import AdminEmailMarketing from "./pages/admin/AdminEmailMarketing";
 import AdminCountryRates from "./pages/admin/AdminCountryRates";
+import AdminSupport from "./pages/admin/AdminSupport";
+import AdminContacts from "./pages/admin/AdminContacts";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -39,6 +44,9 @@ const App = () => (
               <Route path="/gift-cards" element={<GiftCards />} />
               <Route path="/sell" element={<Sell />} />
               <Route path="/buy" element={<Buy />} />
+              <Route path="/help" element={<HelpCenter />} />
+              <Route path="/contact" element={<ContactUs />} />
+              <Route path="/faq" element={<FAQ />} />
               <Route
                 path="/dashboard"
                 element={
@@ -93,6 +101,22 @@ const App = () => (
                 element={
                   <AdminProtectedRoute>
                     <AdminCountryRates />
+                  </AdminProtectedRoute>
+                }
+              />
+              <Route
+                path="/admin/support"
+                element={
+                  <AdminProtectedRoute>
+                    <AdminSupport />
+                  </AdminProtectedRoute>
+                }
+              />
+              <Route
+                path="/admin/contacts"
+                element={
+                  <AdminProtectedRoute>
+                    <AdminContacts />
                   </AdminProtectedRoute>
                 }
               />
