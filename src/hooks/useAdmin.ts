@@ -55,7 +55,12 @@ export function useIsAdmin() {
   return useQuery({
     queryKey: ["isAdmin", user?.id],
     queryFn: async () => {
-      if (!user) return false;
+      if (!user) {
+        console.log("useIsAdmin: No user found");
+        return false;
+      }
+      
+      console.log("useIsAdmin: Checking role for user:", user.id);
       
       const { data, error } = await supabase
         .rpc("has_role", { _user_id: user.id, _role: "admin" });
@@ -64,9 +69,12 @@ export function useIsAdmin() {
         console.error("Error checking admin role:", error);
         return false;
       }
+      
+      console.log("useIsAdmin: Result:", data);
       return data as boolean;
     },
     enabled: !!user,
+    staleTime: 0, // Always refetch to ensure fresh data
   });
 }
 
