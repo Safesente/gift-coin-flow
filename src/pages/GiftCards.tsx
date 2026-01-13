@@ -5,7 +5,7 @@ import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Search, TrendingUp, TrendingDown, Loader2 } from "lucide-react";
+import { Search, Loader2 } from "lucide-react";
 import { usePublicGiftCards } from "@/hooks/useAdmin";
 
 const GiftCards = () => {
@@ -96,16 +96,14 @@ const GiftCards = () => {
                       <h3 className="font-semibold text-foreground mb-3 truncate">{card.name}</h3>
 
                       {/* Action Buttons */}
-                      <div className="flex gap-2">
-                        <Link to={`/sell?card=${card.id}`} className="flex-1">
-                          <Button variant="outline" size="sm" className="w-full gap-1 text-xs">
-                            <TrendingUp className="w-3 h-3" />
+                      <div className="flex flex-col gap-1.5">
+                        <Link to={`/sell?card=${card.id}`}>
+                          <Button variant="outline" size="sm" className="w-full text-xs h-8">
                             Sell
                           </Button>
                         </Link>
-                        <Link to={`/buy?card=${card.id}`} className="flex-1">
-                          <Button variant="default" size="sm" className="w-full gap-1 text-xs">
-                            <TrendingDown className="w-3 h-3" />
+                        <Link to={`/buy?card=${card.id}`}>
+                          <Button variant="default" size="sm" className="w-full text-xs h-8">
                             Buy
                           </Button>
                         </Link>
