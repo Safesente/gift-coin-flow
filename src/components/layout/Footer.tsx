@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { Shield, Lock, Zap, Mail } from "lucide-react";
+import gxchangeLogo from "@/assets/gxchange-logo.png";
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
@@ -51,9 +52,11 @@ const Footer = () => {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8 py-12">
           <div>
             <div className="flex items-center gap-2 mb-4">
-              <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
-                <span className="text-primary-foreground font-bold">G</span>
-              </div>
+              <img 
+                src={gxchangeLogo} 
+                alt="gXchange" 
+                className="w-8 h-8 rounded-lg"
+              />
               <span className="text-lg font-bold">
                 g<span className="text-primary">X</span>change
               </span>
