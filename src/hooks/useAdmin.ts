@@ -124,6 +124,24 @@ export function useAllUserRoles() {
   });
 }
 
+// Public hook for fetching active gift cards - no auth required
+export function usePublicGiftCards() {
+  return useQuery({
+    queryKey: ["giftCards", false],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("gift_cards")
+        .select("*")
+        .eq("is_active", true)
+        .order("name", { ascending: true });
+      
+      if (error) throw error;
+      return data as GiftCard[];
+    },
+  });
+}
+
+// Admin hook for fetching all gift cards - requires admin auth
 export function useGiftCards(adminView = false) {
   const { data: isAdmin, isLoading: isAdminLoading } = useIsAdmin();
 
@@ -141,8 +159,8 @@ export function useGiftCards(adminView = false) {
       if (error) throw error;
       return data as GiftCard[];
     },
-    // For admin view, wait for admin check. For public view, run immediately.
-    enabled: adminView ? (isAdmin === true && !isAdminLoading) : true,
+    // For public view, always enabled. For admin view, wait for admin check to complete.
+    enabled: adminView ? (!isAdminLoading && isAdmin === true) : true,
   });
 }
 

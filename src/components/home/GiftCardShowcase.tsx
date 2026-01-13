@@ -1,10 +1,10 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Loader2 } from "lucide-react";
-import { useGiftCards } from "@/hooks/useAdmin";
+import { usePublicGiftCards } from "@/hooks/useAdmin";
 
 const GiftCardShowcase = () => {
-  const { data: giftCards = [], isLoading } = useGiftCards(false);
+  const { data: giftCards = [], isLoading } = usePublicGiftCards();
   
   // Show first 12 cards on homepage
   const displayCards = giftCards.slice(0, 12);
