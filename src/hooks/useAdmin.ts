@@ -125,7 +125,7 @@ export function useAllUserRoles() {
 }
 
 export function useGiftCards(adminView = false) {
-  const { data: isAdmin } = useIsAdmin();
+  const { data: isAdmin, isLoading: isAdminLoading } = useIsAdmin();
 
   return useQuery({
     queryKey: ["giftCards", adminView],
@@ -141,7 +141,8 @@ export function useGiftCards(adminView = false) {
       if (error) throw error;
       return data as GiftCard[];
     },
-    enabled: adminView ? isAdmin === true : true,
+    // For admin view, wait for admin check. For public view, run immediately.
+    enabled: adminView ? (isAdmin === true && !isAdminLoading) : true,
   });
 }
 
