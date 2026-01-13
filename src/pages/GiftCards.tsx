@@ -7,7 +7,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Search, Loader2 } from "lucide-react";
 import { usePublicGiftCards } from "@/hooks/useAdmin";
-import giftCardIcon from "@/assets/gift-card-icon.jpeg";
 
 const GiftCards = () => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -78,12 +77,18 @@ const GiftCards = () => {
                             className="w-10 h-10 object-contain"
                             onError={(e) => {
                               const target = e.target as HTMLImageElement;
-                              target.src = giftCardIcon;
-                              target.className = 'w-8 h-8 object-contain [filter:invert(42%)_sepia(93%)_saturate(1352%)_hue-rotate(87deg)_brightness(95%)_contrast(101%)]';
+                              target.style.display = 'none';
+                              const parent = target.parentElement;
+                              if (parent && !parent.querySelector('span')) {
+                                const span = document.createElement('span');
+                                span.className = 'text-xl font-bold text-foreground';
+                                span.textContent = card.name.charAt(0);
+                                parent.appendChild(span);
+                              }
                             }}
                           />
                         ) : (
-                          <img src={giftCardIcon} alt="Gift card" className="w-8 h-8 object-contain [filter:invert(42%)_sepia(93%)_saturate(1352%)_hue-rotate(87deg)_brightness(95%)_contrast(101%)]" />
+                          <span className="text-xl font-bold text-foreground">{card.name.charAt(0)}</span>
                         )}
                       </div>
 
