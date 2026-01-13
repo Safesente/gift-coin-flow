@@ -3,6 +3,7 @@ import { Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Menu, X, ArrowRight, LayoutDashboard } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
+import gxchangeLogo from "@/assets/gxchange-logo.png";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -24,9 +25,11 @@ const Header = () => {
         <div className="flex items-center justify-between h-16 md:h-20">
           {/* Logo */}
           <Link to="/" className="flex items-center gap-2 group">
-            <div className="w-9 h-9 rounded-xl bg-primary flex items-center justify-center shadow-glow transition-all duration-300 group-hover:scale-105">
-              <span className="text-primary-foreground font-bold text-lg">G</span>
-            </div>
+            <img 
+              src={gxchangeLogo} 
+              alt="gXchange" 
+              className="w-9 h-9 rounded-xl shadow-glow transition-all duration-300 group-hover:scale-105"
+            />
             <span className="text-xl font-bold text-foreground">
               g<span className="text-primary">X</span>change
             </span>
