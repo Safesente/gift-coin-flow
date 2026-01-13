@@ -1,6 +1,9 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, TrendingUp, TrendingDown, Shield } from "lucide-react";
+import amazonCard from "@/assets/amazon-giftcard.jpg";
+import appleCard from "@/assets/apple-giftcard.png";
+import starbucksCard from "@/assets/starbucks-giftcard.jpg";
 
 const Hero = () => {
   return (
@@ -69,16 +72,24 @@ const Hero = () => {
         {/* Floating Cards Preview */}
         <div className="relative max-w-4xl mx-auto pb-12">
           <div className="flex justify-center gap-4 md:gap-6 px-4">
-            {["Amazon", "Apple", "Google", "Steam", "Netflix"].map((brand, index) => (
+            {[
+              { brand: "Amazon", image: amazonCard },
+              { brand: "Apple", image: appleCard },
+              { brand: "Starbucks", image: starbucksCard },
+            ].map((card, index) => (
               <div
-                key={brand}
+                key={card.brand}
                 className={`glass-card rounded-2xl p-4 md:p-6 flex-shrink-0 transition-all duration-500 hover:scale-105 hover:shadow-glow animate-fade-up`}
                 style={{ animationDelay: `${400 + index * 100}ms` }}
               >
-                <div className="w-12 h-12 md:w-16 md:h-16 rounded-xl bg-gradient-to-br from-primary/10 to-secondary/10 flex items-center justify-center mb-3">
-                  <span className="text-xl md:text-2xl font-bold text-primary">{brand[0]}</span>
+                <div className="w-16 h-16 md:w-24 md:h-24 rounded-xl overflow-hidden mb-3">
+                  <img 
+                    src={card.image} 
+                    alt={`${card.brand} Gift Card`}
+                    className="w-full h-full object-cover"
+                  />
                 </div>
-                <p className="text-sm font-medium text-foreground hidden md:block">{brand}</p>
+                <p className="text-sm font-medium text-foreground text-center">{card.brand}</p>
               </div>
             ))}
           </div>
