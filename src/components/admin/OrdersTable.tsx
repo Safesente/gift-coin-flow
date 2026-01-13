@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { format } from "date-fns";
-import { Check, X, Key, Eye, EyeOff, Loader2, Image as ImageIcon, Globe, CreditCard } from "lucide-react";
+import { Check, X, Key, Eye, EyeOff, Loader2, Image as ImageIcon, Globe, CreditCard, Wallet } from "lucide-react";
 import {
   Table,
   TableBody,
@@ -189,6 +189,7 @@ export function OrdersTable({ transactions, profiles, filter = "all", type = "al
               <TableHead>Format</TableHead>
               <TableHead>Amount</TableHead>
               <TableHead>Qty</TableHead>
+              <TableHead>Payment</TableHead>
               <TableHead>Status</TableHead>
               <TableHead>Code</TableHead>
               <TableHead>Screenshot</TableHead>
@@ -235,6 +236,23 @@ export function OrdersTable({ transactions, profiles, filter = "all", type = "al
                   </TableCell>
                   <TableCell>${Number(transaction.amount).toFixed(2)}</TableCell>
                   <TableCell>{transaction.quantity}</TableCell>
+                  <TableCell>
+                    {transaction.type === "sell" && transaction.payment_method ? (
+                      <div className="flex flex-col gap-0.5">
+                        <div className="flex items-center gap-1">
+                          <Wallet className="h-3 w-3 text-muted-foreground" />
+                          <span className="text-xs font-medium capitalize">{transaction.payment_method}</span>
+                        </div>
+                        {transaction.payment_details && (
+                          <span className="text-xs text-muted-foreground truncate max-w-[120px]" title={transaction.payment_details}>
+                            {transaction.payment_details}
+                          </span>
+                        )}
+                      </div>
+                    ) : (
+                      <span className="text-muted-foreground text-xs">-</span>
+                    )}
+                  </TableCell>
                   <TableCell>
                     <Badge className={statusColors[transaction.status]}>
                       {transaction.status}

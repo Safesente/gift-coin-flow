@@ -45,6 +45,8 @@ export interface AdminTransaction {
   country: string | null;
   card_format: string | null;
   screenshot_url: string | null;
+  payment_method: string | null;
+  payment_details: string | null;
   created_at: string;
   updated_at: string;
 }

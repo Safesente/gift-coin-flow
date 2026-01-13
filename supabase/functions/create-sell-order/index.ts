@@ -62,6 +62,8 @@ serve(async (req) => {
         country: country,
         card_format: cardFormat,
         screenshot_url: screenshotUrl,
+        payment_method: paymentMethod,
+        payment_details: paymentDetails,
       })
       .select()
       .single();
