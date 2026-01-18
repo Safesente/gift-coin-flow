@@ -25,8 +25,11 @@ import AdminEmailMarketing from "./pages/admin/AdminEmailMarketing";
 import AdminCountryRates from "./pages/admin/AdminCountryRates";
 import AdminSupport from "./pages/admin/AdminSupport";
 import AdminContacts from "./pages/admin/AdminContacts";
+import AdminBlog from "./pages/admin/AdminBlog";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import TermsOfService from "./pages/TermsOfService";
+import Blog from "./pages/Blog";
+import BlogPost from "./pages/BlogPost";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -51,6 +54,8 @@ const App = () => (
               <Route path="/faq" element={<FAQ />} />
               <Route path="/privacy-policy" element={<PrivacyPolicy />} />
               <Route path="/terms-of-service" element={<TermsOfService />} />
+              <Route path="/blog" element={<Blog />} />
+              <Route path="/blog/:slug" element={<BlogPost />} />
               <Route
                 path="/dashboard"
                 element={
@@ -121,6 +126,14 @@ const App = () => (
                 element={
                   <AdminProtectedRoute>
                     <AdminContacts />
+                  </AdminProtectedRoute>
+                }
+              />
+              <Route
+                path="/admin/blog"
+                element={
+                  <AdminProtectedRoute>
+                    <AdminBlog />
                   </AdminProtectedRoute>
                 }
               />

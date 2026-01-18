@@ -12,7 +12,8 @@ import {
   MessageCircle,
   Inbox,
   Menu,
-  X
+  X,
+  FileText
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -29,6 +30,7 @@ const navItems = [
   { href: "/admin/country-rates", icon: Globe, label: "Country Rates" },
   { href: "/admin/users", icon: Users, label: "Users" },
   { href: "/admin/email-marketing", icon: Mail, label: "Email Marketing" },
+  { href: "/admin/blog", icon: FileText, label: "Blog" },
   { href: "/admin/support", icon: MessageCircle, label: "Support Chat" },
   { href: "/admin/contacts", icon: Inbox, label: "Contact Forms" },
 ];
