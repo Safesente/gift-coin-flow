@@ -1,6 +1,6 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.57.2";
-import { SMTPClient } from "https://deno.land/x/denomailer@1.6.0/mod.ts";
+import nodemailer from "https://esm.sh/nodemailer@6.9.9";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -120,6 +120,20 @@ const handler = async (req: Request): Promise<Response> => {
       errors: [] as string[],
     };
 
+    // Create transporter once
+    const transporter = nodemailer.createTransport({
+      host: Deno.env.get("SMTP_HOST"),
+      port: parseInt(Deno.env.get("SMTP_PORT") || "587"),
+      secure: false,
+      auth: {
+        user: Deno.env.get("SMTP_USER"),
+        pass: Deno.env.get("SMTP_PASS"),
+      },
+      tls: {
+        rejectUnauthorized: false,
+      },
+    });
+
     // Send emails in batches to avoid rate limits
     const batchSize = 10;
     for (let i = 0; i < emails.length; i += batchSize) {
@@ -127,23 +141,11 @@ const handler = async (req: Request): Promise<Response> => {
       
       const promises = batch.map(async (email) => {
         try {
-          const client = new SMTPClient({
-            connection: {
-              hostname: Deno.env.get("SMTP_HOST") || "",
-              port: parseInt(Deno.env.get("SMTP_PORT") || "587"),
-              tls: false,
-              auth: {
-                username: Deno.env.get("SMTP_USER") || "",
-                password: Deno.env.get("SMTP_PASS") || "",
-              },
-            },
-          });
-
-          await client.send({
+          await transporter.sendMail({
             from: `gXchange <${Deno.env.get("SMTP_USER")}>`,
             to: email,
             subject,
-            content: "Please view this email in an HTML-compatible email client.",
+            text: "Please view this email in an HTML-compatible email client.",
             html: `
               <!DOCTYPE html>
               <html>
@@ -177,8 +179,6 @@ const handler = async (req: Request): Promise<Response> => {
               </html>
             `,
           });
-
-          await client.close();
           results.sent++;
         } catch (err: any) {
           results.failed++;

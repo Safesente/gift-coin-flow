@@ -1,7 +1,7 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import Stripe from "https://esm.sh/stripe@18.5.0";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.57.2";
-import { SMTPClient } from "https://deno.land/x/denomailer@1.6.0/mod.ts";
+import nodemailer from "https://esm.sh/nodemailer@6.9.9";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -15,15 +15,16 @@ const logStep = (step: string, details?: any) => {
 
 const sendOrderNotification = async (email: string, fullName: string, cardName: string, amount: number, quantity: number) => {
   try {
-    const client = new SMTPClient({
-      connection: {
-        hostname: Deno.env.get("SMTP_HOST") || "",
-        port: parseInt(Deno.env.get("SMTP_PORT") || "587"),
-        tls: false,
-        auth: {
-          username: Deno.env.get("SMTP_USER") || "",
-          password: Deno.env.get("SMTP_PASS") || "",
-        },
+    const transporter = nodemailer.createTransport({
+      host: Deno.env.get("SMTP_HOST"),
+      port: parseInt(Deno.env.get("SMTP_PORT") || "587"),
+      secure: false,
+      auth: {
+        user: Deno.env.get("SMTP_USER"),
+        pass: Deno.env.get("SMTP_PASS"),
+      },
+      tls: {
+        rejectUnauthorized: false,
       },
     });
 
@@ -73,7 +74,7 @@ const sendOrderNotification = async (email: string, fullName: string, cardName: 
             </p>
             
             <div style="text-align: center; margin: 30px 0;">
-              <a href="https://gift-coin-flow.lovable.app/dashboard" style="display: inline-block; background: linear-gradient(135deg, #eab308 0%, #ca8a04 100%); color: white; text-decoration: none; padding: 14px 32px; border-radius: 8px; font-weight: 600; font-size: 16px;">
+              <a href="https://gxchange.cards/dashboard" style="display: inline-block; background: linear-gradient(135deg, #eab308 0%, #ca8a04 100%); color: white; text-decoration: none; padding: 14px 32px; border-radius: 8px; font-weight: 600; font-size: 16px;">
                 View in Dashboard
               </a>
             </div>
@@ -88,15 +89,14 @@ const sendOrderNotification = async (email: string, fullName: string, cardName: 
       </html>
     `;
 
-    await client.send({
+    await transporter.sendMail({
       from: `gXchange <${Deno.env.get("SMTP_USER")}>`,
       to: email,
       subject: `Order Received - ${cardName} Gift Card`,
-      content: "Please view this email in an HTML-compatible email client.",
+      text: "Please view this email in an HTML-compatible email client.",
       html: htmlContent,
     });
 
-    await client.close();
     logStep("Order notification email sent", { email });
   } catch (error: any) {
     logStep("Failed to send notification email", { error: error.message });
@@ -174,7 +174,7 @@ serve(async (req) => {
       }
     }
 
-    const origin = req.headers.get("origin") || "http://localhost:5173";
+    const origin = req.headers.get("origin") || "https://gxchange.cards";
 
     // Create checkout session
     const session = await stripe.checkout.sessions.create({
