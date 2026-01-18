@@ -295,12 +295,12 @@ const BlogEditor = ({ post, onClose, userId }: BlogEditorProps) => {
       {/* Category */}
       <div className="space-y-2">
         <Label htmlFor="category">Category</Label>
-        <Select value={categoryId} onValueChange={setCategoryId}>
+        <Select value={categoryId || "none"} onValueChange={(value) => setCategoryId(value === "none" ? "" : value)}>
           <SelectTrigger>
             <SelectValue placeholder="Select a category" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="">No category</SelectItem>
+            <SelectItem value="none">No category</SelectItem>
             {categories?.map((category) => (
               <SelectItem key={category.id} value={category.id}>
                 {category.name}
