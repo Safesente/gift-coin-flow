@@ -78,6 +78,9 @@ const Footer = () => {
               <Link to="/gift-cards" className="text-sm text-background/60 hover:text-background transition-colors">
                 All Gift Cards
               </Link>
+              <Link to="/blog" className="text-sm text-background/60 hover:text-background transition-colors">
+                Blog
+              </Link>
             </nav>
           </div>
 

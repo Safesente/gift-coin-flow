@@ -1,5 +1,5 @@
 import { useState, useRef } from "react";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   Bold,
   Italic,
@@ -17,6 +17,8 @@ import {
   AlignLeft,
   AlignCenter,
   AlignRight,
+  Upload,
+  X,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -29,6 +31,13 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { toast } from "sonner";
 
 interface BlogPost {
@@ -39,6 +48,13 @@ interface BlogPost {
   excerpt: string | null;
   featured_image: string | null;
   is_published: boolean;
+  category_id: string | null;
+}
+
+interface BlogCategory {
+  id: string;
+  name: string;
+  slug: string;
 }
 
 interface BlogEditorProps {
@@ -50,14 +66,30 @@ interface BlogEditorProps {
 const BlogEditor = ({ post, onClose, userId }: BlogEditorProps) => {
   const queryClient = useQueryClient();
   const contentRef = useRef<HTMLDivElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const [title, setTitle] = useState(post?.title || "");
   const [slug, setSlug] = useState(post?.slug || "");
   const [excerpt, setExcerpt] = useState(post?.excerpt || "");
   const [featuredImage, setFeaturedImage] = useState(post?.featured_image || "");
+  const [categoryId, setCategoryId] = useState(post?.category_id || "");
   const [linkUrl, setLinkUrl] = useState("");
   const [linkText, setLinkText] = useState("");
   const [imageUrl, setImageUrl] = useState("");
   const [chartData, setChartData] = useState("");
+  const [isUploading, setIsUploading] = useState(false);
+
+  // Fetch categories
+  const { data: categories } = useQuery({
+    queryKey: ["blog-categories"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("blog_categories")
+        .select("id, name, slug")
+        .order("name");
+      if (error) throw error;
+      return data as BlogCategory[];
+    },
+  });
 
   // Generate slug from title
   const generateSlug = (title: string) => {
@@ -105,7 +137,6 @@ const BlogEditor = ({ post, onClose, userId }: BlogEditorProps) => {
 
   const insertChart = () => {
     if (chartData) {
-      // Simple bar chart representation using divs
       const chartHtml = `
         <div class="my-6 p-4 bg-muted rounded-lg">
           <p class="text-sm text-muted-foreground mb-2">Chart: ${chartData}</p>
@@ -123,6 +154,56 @@ const BlogEditor = ({ post, onClose, userId }: BlogEditorProps) => {
     }
   };
 
+  const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    // Validate file type
+    if (!file.type.startsWith("image/")) {
+      toast.error("Please upload an image file");
+      return;
+    }
+
+    // Validate file size (max 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error("Image must be less than 5MB");
+      return;
+    }
+
+    setIsUploading(true);
+
+    try {
+      const fileExt = file.name.split(".").pop();
+      const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
+      const filePath = `blog/${fileName}`;
+
+      const { error: uploadError } = await supabase.storage
+        .from("public")
+        .upload(filePath, file);
+
+      if (uploadError) throw uploadError;
+
+      const { data: { publicUrl } } = supabase.storage
+        .from("public")
+        .getPublicUrl(filePath);
+
+      setFeaturedImage(publicUrl);
+      toast.success("Image uploaded successfully");
+    } catch (error) {
+      console.error("Upload error:", error);
+      toast.error("Failed to upload image");
+    } finally {
+      setIsUploading(false);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = "";
+      }
+    }
+  };
+
+  const removeFeaturedImage = () => {
+    setFeaturedImage("");
+  };
+
   const saveMutation = useMutation({
     mutationFn: async () => {
       const content = contentRef.current?.innerHTML || "";
@@ -137,6 +218,7 @@ const BlogEditor = ({ post, onClose, userId }: BlogEditorProps) => {
         content,
         excerpt: excerpt.trim() || null,
         featured_image: featuredImage.trim() || null,
+        category_id: categoryId || null,
         author_id: userId,
       };
 
@@ -210,21 +292,74 @@ const BlogEditor = ({ post, onClose, userId }: BlogEditorProps) => {
         </div>
       </div>
 
-      {/* Featured Image */}
+      {/* Category */}
       <div className="space-y-2">
-        <Label htmlFor="featured-image">Featured Image URL</Label>
-        <Input
-          id="featured-image"
-          value={featuredImage}
-          onChange={(e) => setFeaturedImage(e.target.value)}
-          placeholder="https://example.com/image.jpg"
+        <Label htmlFor="category">Category</Label>
+        <Select value={categoryId} onValueChange={setCategoryId}>
+          <SelectTrigger>
+            <SelectValue placeholder="Select a category" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="">No category</SelectItem>
+            {categories?.map((category) => (
+              <SelectItem key={category.id} value={category.id}>
+                {category.name}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
+
+      {/* Featured Image Upload */}
+      <div className="space-y-2">
+        <Label>Featured Image</Label>
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept="image/*"
+          onChange={handleFileUpload}
+          className="hidden"
         />
-        {featuredImage && (
-          <img
-            src={featuredImage}
-            alt="Featured preview"
-            className="mt-2 max-h-32 rounded-lg object-cover"
-          />
+        
+        {featuredImage ? (
+          <div className="relative inline-block">
+            <img
+              src={featuredImage}
+              alt="Featured preview"
+              className="max-h-48 rounded-lg object-cover border"
+            />
+            <Button
+              type="button"
+              variant="destructive"
+              size="icon"
+              className="absolute top-2 right-2 h-8 w-8"
+              onClick={removeFeaturedImage}
+            >
+              <X className="h-4 w-4" />
+            </Button>
+          </div>
+        ) : (
+          <div className="flex flex-col sm:flex-row gap-3">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => fileInputRef.current?.click()}
+              disabled={isUploading}
+              className="gap-2"
+            >
+              <Upload className="h-4 w-4" />
+              {isUploading ? "Uploading..." : "Upload Image"}
+            </Button>
+            <div className="flex items-center gap-2 flex-1">
+              <span className="text-sm text-muted-foreground">or</span>
+              <Input
+                value={featuredImage}
+                onChange={(e) => setFeaturedImage(e.target.value)}
+                placeholder="Enter image URL"
+                className="flex-1"
+              />
+            </div>
+          </div>
         )}
       </div>
 
