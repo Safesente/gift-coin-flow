@@ -20,7 +20,7 @@ const Index = () => {
           name="keywords"
           content="gift cards, sell gift cards, buy gift cards, amazon gift card, apple gift card, steam gift card, gift card exchange"
         />
-        <link rel="canonical" href="https://gxchange.com" />
+        <link rel="canonical" href="https://gxchange.cards/" />
         <script type="application/ld+json">
           {JSON.stringify({
             "@context": "https://schema.org",
