@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
-import { Shield, Lock, Zap, Mail } from "lucide-react";
+import { Shield, Lock, Zap, Mail, Download, Smartphone } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import gxchangeLogo from "@/assets/gxchange-logo.png";
 
 const Footer = () => {
@@ -8,6 +9,32 @@ const Footer = () => {
   return (
     <footer className="bg-foreground text-background">
       <div className="container mx-auto py-16">
+        {/* Download App CTA */}
+        <div className="bg-gradient-to-r from-primary/20 to-secondary/20 rounded-2xl p-6 md:p-8 mb-12 border border-primary/30">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-6">
+            <div className="flex items-center gap-4">
+              <div className="w-14 h-14 rounded-xl bg-primary/30 flex items-center justify-center">
+                <Smartphone className="w-7 h-7 text-primary" />
+              </div>
+              <div className="text-center md:text-left">
+                <h3 className="text-xl font-bold">Get the gXchange App</h3>
+                <p className="text-background/70 text-sm">
+                  Install our app for faster trades on iOS & Android
+                </p>
+              </div>
+            </div>
+            <Link to="/install">
+              <Button 
+                size="lg" 
+                className="bg-primary hover:bg-primary/90 text-primary-foreground gap-2 rounded-full px-8"
+              >
+                <Download className="w-5 h-5" />
+                Install App
+              </Button>
+            </Link>
+          </div>
+        </div>
+
         {/* Trust Badges */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-6 pb-12 border-b border-background/10">
           <div className="flex items-center gap-3">
