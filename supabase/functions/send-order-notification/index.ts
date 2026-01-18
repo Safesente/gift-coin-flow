@@ -1,5 +1,5 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
-import { SMTPClient } from "https://deno.land/x/denomailer@1.6.0/mod.ts";
+import nodemailer from "https://esm.sh/nodemailer@6.9.9";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -132,7 +132,7 @@ const handler = async (req: Request): Promise<Response> => {
             </p>
             
             <div style="text-align: center; margin: 30px 0;">
-              <a href="https://gift-coin-flow.lovable.app/dashboard" style="display: inline-block; background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; text-decoration: none; padding: 14px 32px; border-radius: 8px; font-weight: 600; font-size: 16px;">
+              <a href="https://gxchange.cards/dashboard" style="display: inline-block; background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; text-decoration: none; padding: 14px 32px; border-radius: 8px; font-weight: 600; font-size: 16px;">
                 View in Dashboard
               </a>
             </div>
@@ -147,30 +147,29 @@ const handler = async (req: Request): Promise<Response> => {
       </html>
     `;
 
-    // Initialize SMTP client
-    const client = new SMTPClient({
-      connection: {
-        hostname: Deno.env.get("SMTP_HOST") || "",
-        port: parseInt(Deno.env.get("SMTP_PORT") || "587"),
-        tls: false,
-        auth: {
-          username: Deno.env.get("SMTP_USER") || "",
-          password: Deno.env.get("SMTP_PASS") || "",
-        },
+    // Create transporter using SMTP
+    const transporter = nodemailer.createTransport({
+      host: Deno.env.get("SMTP_HOST"),
+      port: parseInt(Deno.env.get("SMTP_PORT") || "587"),
+      secure: false,
+      auth: {
+        user: Deno.env.get("SMTP_USER"),
+        pass: Deno.env.get("SMTP_PASS"),
+      },
+      tls: {
+        rejectUnauthorized: false,
       },
     });
 
     logStep("Sending email via SMTP", { to: email, subject });
 
-    await client.send({
+    await transporter.sendMail({
       from: `gXchange <${Deno.env.get("SMTP_USER")}>`,
       to: email,
       subject: subject,
-      content: "Please view this email in an HTML-compatible email client.",
+      text: "Please view this email in an HTML-compatible email client.",
       html: htmlContent,
     });
-
-    await client.close();
 
     logStep("Order notification sent successfully");
 
