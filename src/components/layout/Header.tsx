@@ -15,6 +15,7 @@ const Header = () => {
     { href: "/sell", label: "Sell Gift Cards" },
     { href: "/buy", label: "Buy Gift Cards" },
     { href: "/gift-cards", label: "Gift Cards" },
+    { href: "/blog", label: "Blog" },
   ];
 
   const isActive = (path: string) => location.pathname === path;
