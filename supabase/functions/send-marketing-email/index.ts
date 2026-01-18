@@ -1,8 +1,6 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
-import { Resend } from "https://esm.sh/resend@2.0.0";
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2.39.3";
-
-const resend = new Resend(Deno.env.get("RESEND_API_KEY"));
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2.57.2";
+import { SMTPClient } from "https://deno.land/x/denomailer@1.6.0/mod.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -20,8 +18,12 @@ interface MarketingEmailRequest {
   recipientEmails?: string[];
 }
 
+const logStep = (step: string, details?: any) => {
+  console.log(`[SEND-MARKETING-EMAIL] ${step}`, details ? JSON.stringify(details, null, 2) : '');
+};
+
 const handler = async (req: Request): Promise<Response> => {
-  console.log("send-marketing-email function called");
+  logStep("Function called");
   
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
@@ -102,7 +104,7 @@ const handler = async (req: Request): Promise<Response> => {
       });
     }
 
-    console.log(`Sending marketing email to ${emails.length} recipients`);
+    logStep(`Sending marketing email to ${emails.length} recipients`);
 
     const ctaSection = ctaText && ctaUrl ? `
       <div style="text-align: center; margin: 30px 0;">
@@ -125,10 +127,23 @@ const handler = async (req: Request): Promise<Response> => {
       
       const promises = batch.map(async (email) => {
         try {
-          await resend.emails.send({
-            from: "gXchange <onboarding@resend.dev>",
-            to: [email],
+          const client = new SMTPClient({
+            connection: {
+              hostname: Deno.env.get("SMTP_HOST") || "",
+              port: parseInt(Deno.env.get("SMTP_PORT") || "587"),
+              tls: false,
+              auth: {
+                username: Deno.env.get("SMTP_USER") || "",
+                password: Deno.env.get("SMTP_PASS") || "",
+              },
+            },
+          });
+
+          await client.send({
+            from: `gXchange <${Deno.env.get("SMTP_USER")}>`,
+            to: email,
             subject,
+            content: "Please view this email in an HTML-compatible email client.",
             html: `
               <!DOCTYPE html>
               <html>
@@ -162,6 +177,8 @@ const handler = async (req: Request): Promise<Response> => {
               </html>
             `,
           });
+
+          await client.close();
           results.sent++;
         } catch (err: any) {
           results.failed++;
@@ -177,7 +194,7 @@ const handler = async (req: Request): Promise<Response> => {
       }
     }
 
-    console.log(`Marketing email results: ${results.sent} sent, ${results.failed} failed`);
+    logStep(`Marketing email results: ${results.sent} sent, ${results.failed} failed`);
 
     return new Response(JSON.stringify({ 
       success: true, 
@@ -190,7 +207,7 @@ const handler = async (req: Request): Promise<Response> => {
       headers: { "Content-Type": "application/json", ...corsHeaders },
     });
   } catch (error: any) {
-    console.error("Error sending marketing email:", error);
+    logStep("Error sending marketing email", { error: error.message });
     return new Response(
       JSON.stringify({ success: false, error: error.message }),
       { status: 500, headers: { "Content-Type": "application/json", ...corsHeaders } }
