@@ -11,6 +11,8 @@ import Index from "./pages/Index";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import VerifyEmail from "./pages/VerifyEmail";
+import ForgotPassword from "./pages/ForgotPassword";
+import ResetPassword from "./pages/ResetPassword";
 import GiftCards from "./pages/GiftCards";
 import Sell from "./pages/Sell";
 import Buy from "./pages/Buy";
@@ -48,6 +50,8 @@ const App = () => (
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
               <Route path="/verify-email" element={<VerifyEmail />} />
+              <Route path="/forgot-password" element={<ForgotPassword />} />
+              <Route path="/reset-password" element={<ResetPassword />} />
               <Route path="/gift-cards" element={<GiftCards />} />
               <Route path="/sell" element={<Sell />} />
               <Route path="/buy" element={<Buy />} />
