@@ -17,6 +17,7 @@ import GiftCards from "./pages/GiftCards";
 import Sell from "./pages/Sell";
 import Buy from "./pages/Buy";
 import Dashboard from "./pages/Dashboard";
+import AccountSettings from "./pages/AccountSettings";
 import HelpCenter from "./pages/HelpCenter";
 import ContactUs from "./pages/ContactUs";
 import FAQ from "./pages/FAQ";
@@ -67,6 +68,14 @@ const App = () => (
                 element={
                   <ProtectedRoute>
                     <Dashboard />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/settings"
+                element={
+                  <ProtectedRoute>
+                    <AccountSettings />
                   </ProtectedRoute>
                 }
               />
