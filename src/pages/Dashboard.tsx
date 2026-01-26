@@ -15,6 +15,7 @@ import {
   Eye,
   EyeOff,
   Copy,
+  Settings,
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useTransactions, useTransactionStats, Transaction } from "@/hooks/useTransactions";
@@ -124,6 +125,12 @@ const Dashboard = () => {
                     <TrendingDown className="w-4 h-4" />
                     <span className="hidden sm:inline">Buy Cards</span>
                     <span className="sm:hidden">Buy</span>
+                  </Button>
+                </Link>
+                <Link to="/settings">
+                  <Button variant="outline" size="sm" className="gap-2">
+                    <Settings className="w-4 h-4" />
+                    <span className="hidden sm:inline">Settings</span>
                   </Button>
                 </Link>
                 <Button variant="ghost" size="sm" onClick={handleSignOut} className="gap-2">
