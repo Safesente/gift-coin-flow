@@ -80,9 +80,9 @@ const Register = () => {
       
       toast({
         title: "Account created!",
-        description: "Welcome to gXchange! You can now start trading gift cards.",
+        description: "Please check your email and click the verification link to activate your account.",
       });
-      navigate("/dashboard");
+      navigate("/login");
     }
     setIsLoading(false);
   };
