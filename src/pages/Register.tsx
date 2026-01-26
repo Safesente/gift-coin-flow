@@ -80,9 +80,9 @@ const Register = () => {
       
       toast({
         title: "Account created!",
-        description: "Please check your email and click the verification link to activate your account.",
+        description: "Please check your email to verify your account.",
       });
-      navigate("/login");
+      navigate("/verify-email");
     }
     setIsLoading(false);
   };
