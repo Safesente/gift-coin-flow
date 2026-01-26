@@ -159,7 +159,7 @@ const ContactUs = () => {
                     </div>
                     <div>
                       <h3 className="font-semibold mb-1">Phone</h3>
-                      <p className="text-sm text-muted-foreground">+1 (555) 123-4567</p>
+                      <p className="text-sm text-muted-foreground">+256767910420</p>
                     </div>
                   </div>
                 </CardContent>
@@ -174,8 +174,7 @@ const ContactUs = () => {
                     <div>
                       <h3 className="font-semibold mb-1">Address</h3>
                       <p className="text-sm text-muted-foreground">
-                        123 Exchange Street<br />
-                        New York, NY 10001
+                        Mbarara City, Uganda
                       </p>
                     </div>
                   </div>
