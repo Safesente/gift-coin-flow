@@ -3,20 +3,20 @@ import {
   DollarSign, 
   Users, 
   CreditCard,
-  TrendingUp,
   Clock,
   CheckCircle,
-  XCircle
+  XCircle,
+  Loader2
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { AdminLayout } from "@/components/admin/AdminLayout";
 import { OrdersTable } from "@/components/admin/OrdersTable";
+import { ActiveUsersWidget } from "@/components/admin/ActiveUsersWidget";
 import { 
   useAllTransactions, 
   useAllProfiles, 
   useGiftCards 
 } from "@/hooks/useAdmin";
-import { Loader2 } from "lucide-react";
 
 export default function AdminOverview() {
   const { data: transactions = [], isLoading: loadingTransactions } = useAllTransactions();
@@ -62,7 +62,9 @@ export default function AdminOverview() {
         </div>
 
         {/* Stats Grid */}
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-5">
+          <ActiveUsersWidget />
+
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">Total Revenue</CardTitle>
