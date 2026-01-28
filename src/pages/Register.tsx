@@ -80,9 +80,9 @@ const Register = () => {
       
       toast({
         title: "Account created!",
-        description: "Please check your email to verify your account.",
+        description: "Welcome to gXchange!",
       });
-      navigate("/verify-email");
+      navigate("/dashboard");
     }
     setIsLoading(false);
   };
