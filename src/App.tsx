@@ -7,6 +7,7 @@ import { HelmetProvider } from "react-helmet-async";
 import { AuthProvider } from "@/contexts/AuthContext";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import { AdminProtectedRoute } from "@/components/admin/AdminProtectedRoute";
+import { VisitorTracker } from "@/components/VisitorTracker";
 import Index from "./pages/Index";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
@@ -30,6 +31,7 @@ import AdminCountryRates from "./pages/admin/AdminCountryRates";
 import AdminSupport from "./pages/admin/AdminSupport";
 import AdminContacts from "./pages/admin/AdminContacts";
 import AdminBlog from "./pages/admin/AdminBlog";
+import AdminAnalytics from "./pages/admin/AdminAnalytics";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import TermsOfService from "./pages/TermsOfService";
 import Blog from "./pages/Blog";
@@ -46,6 +48,7 @@ const App = () => (
           <Toaster />
           <Sonner />
           <BrowserRouter>
+            <VisitorTracker />
             <Routes>
               <Route path="/" element={<Index />} />
               <Route path="/login" element={<Login />} />
@@ -149,6 +152,14 @@ const App = () => (
                 element={
                   <AdminProtectedRoute>
                     <AdminBlog />
+                  </AdminProtectedRoute>
+                }
+              />
+              <Route
+                path="/admin/analytics"
+                element={
+                  <AdminProtectedRoute>
+                    <AdminAnalytics />
                   </AdminProtectedRoute>
                 }
               />
