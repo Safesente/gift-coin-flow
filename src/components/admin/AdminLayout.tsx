@@ -13,7 +13,8 @@ import {
   Inbox,
   Menu,
   X,
-  FileText
+  FileText,
+  BarChart3
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -25,6 +26,7 @@ interface AdminLayoutProps {
 
 const navItems = [
   { href: "/admin", icon: LayoutDashboard, label: "Overview" },
+  { href: "/admin/analytics", icon: BarChart3, label: "Analytics" },
   { href: "/admin/orders", icon: ShoppingCart, label: "Orders" },
   { href: "/admin/cards", icon: CreditCard, label: "Gift Cards" },
   { href: "/admin/country-rates", icon: Globe, label: "Country Rates" },
