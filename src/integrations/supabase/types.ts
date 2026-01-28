@@ -348,6 +348,57 @@ export type Database = {
         }
         Relationships: []
       }
+      visitor_events: {
+        Row: {
+          created_at: string
+          element_class: string | null
+          element_id: string | null
+          element_tag: string | null
+          element_text: string | null
+          event_type: string
+          id: string
+          page_path: string
+          scroll_depth: number | null
+          session_id: string
+          viewport_height: number | null
+          viewport_width: number | null
+          x_position: number | null
+          y_position: number | null
+        }
+        Insert: {
+          created_at?: string
+          element_class?: string | null
+          element_id?: string | null
+          element_tag?: string | null
+          element_text?: string | null
+          event_type: string
+          id?: string
+          page_path: string
+          scroll_depth?: number | null
+          session_id: string
+          viewport_height?: number | null
+          viewport_width?: number | null
+          x_position?: number | null
+          y_position?: number | null
+        }
+        Update: {
+          created_at?: string
+          element_class?: string | null
+          element_id?: string | null
+          element_tag?: string | null
+          element_text?: string | null
+          event_type?: string
+          id?: string
+          page_path?: string
+          scroll_depth?: number | null
+          session_id?: string
+          viewport_height?: number | null
+          viewport_width?: number | null
+          x_position?: number | null
+          y_position?: number | null
+        }
+        Relationships: []
+      }
       visitors: {
         Row: {
           city: string | null

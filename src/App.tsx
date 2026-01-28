@@ -32,6 +32,7 @@ import AdminSupport from "./pages/admin/AdminSupport";
 import AdminContacts from "./pages/admin/AdminContacts";
 import AdminBlog from "./pages/admin/AdminBlog";
 import AdminAnalytics from "./pages/admin/AdminAnalytics";
+import AdminHeatmaps from "./pages/admin/AdminHeatmaps";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import TermsOfService from "./pages/TermsOfService";
 import Blog from "./pages/Blog";
@@ -160,6 +161,14 @@ const App = () => (
                 element={
                   <AdminProtectedRoute>
                     <AdminAnalytics />
+                  </AdminProtectedRoute>
+                }
+              />
+              <Route
+                path="/admin/heatmaps"
+                element={
+                  <AdminProtectedRoute>
+                    <AdminHeatmaps />
                   </AdminProtectedRoute>
                 }
               />
