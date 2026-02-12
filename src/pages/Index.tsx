@@ -4,7 +4,6 @@ import Footer from "@/components/layout/Footer";
 import Hero from "@/components/home/Hero";
 import HowItWorks from "@/components/home/HowItWorks";
 import GiftCardShowcase from "@/components/home/GiftCardShowcase";
-import Features from "@/components/home/Features";
 import CTA from "@/components/home/CTA";
 
 const Index = () => {
@@ -39,7 +38,6 @@ const Index = () => {
           <Hero />
           <HowItWorks />
           <GiftCardShowcase />
-          <Features />
           <CTA />
         </main>
         <Footer />
