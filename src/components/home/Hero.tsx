@@ -7,7 +7,7 @@ import starbucksCard from "@/assets/starbucks-giftcard.jpg";
 
 const Hero = () => {
   return (
-    <section className="relative min-h-screen bg-gradient-hero pt-20 overflow-hidden">
+    <section className="relative bg-gradient-hero pt-20 overflow-hidden">
       {/* Background decorations - enhanced on desktop */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-20 left-10 w-72 h-72 md:w-[500px] md:h-[500px] bg-primary/5 md:bg-primary/8 rounded-full blur-3xl md:animate-float" />
