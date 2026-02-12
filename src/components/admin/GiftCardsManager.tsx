@@ -40,12 +40,21 @@ import {
   useToggleGiftCard, 
   useCreateGiftCard, 
   useDeleteGiftCard,
-  useUpdateGiftCard 
+  useUpdateGiftCard,
+  useCategories,
 } from "@/hooks/useAdmin";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 export function GiftCardsManager() {
   const { toast } = useToast();
   const { data: giftCards = [], isLoading } = useGiftCards(true);
+  const { data: categories = [] } = useCategories();
   const toggleGiftCard = useToggleGiftCard();
   const createGiftCard = useCreateGiftCard();
   const deleteGiftCard = useDeleteGiftCard();
@@ -64,6 +73,7 @@ export function GiftCardsManager() {
     buy_rate: 85,
     sell_rate: 47,
     logo_url: "",
+    category_id: "",
   });
 
   const handleLogoUpload = async (file: File, cardId?: string): Promise<string | null> => {
@@ -138,9 +148,10 @@ export function GiftCardsManager() {
         buy_rate: newCard.buy_rate,
         sell_rate: newCard.sell_rate,
         is_active: true,
+        category_id: newCard.category_id || undefined,
       });
       toast({ title: "Card created", description: `${newCard.name} has been added.` });
-      setNewCard({ name: "", description: "", buy_rate: 85, sell_rate: 47, logo_url: "" });
+      setNewCard({ name: "", description: "", buy_rate: 85, sell_rate: 47, logo_url: "", category_id: "" });
       setDialogOpen(false);
     } catch {
       toast({ title: "Error", description: "Failed to create card.", variant: "destructive" });
@@ -163,6 +174,7 @@ export function GiftCardsManager() {
         logo_url: editingCard.logo_url || undefined,
         buy_rate: editingCard.buy_rate,
         sell_rate: editingCard.sell_rate,
+        category_id: editingCard.category_id || undefined,
       });
       toast({ title: "Card updated", description: `${editingCard.name} has been updated.` });
       setEditDialogOpen(false);
@@ -282,6 +294,20 @@ export function GiftCardsManager() {
                   </Button>
                 </div>
               </div>
+              <div className="space-y-2">
+                <Label>Category</Label>
+                <Select value={newCard.category_id} onValueChange={(val) => setNewCard({ ...newCard, category_id: val === "none" ? "" : val })}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select a category" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="none">No category</SelectItem>
+                    {categories.map((cat) => (
+                      <SelectItem key={cat.id} value={cat.id}>{cat.name}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
             <DialogFooter>
               <Button variant="outline" onClick={() => setDialogOpen(false)}>
@@ -376,6 +402,20 @@ export function GiftCardsManager() {
                     {editingCard.logo_url ? "Change Logo" : "Upload Logo"}
                   </Button>
                 </div>
+              </div>
+              <div className="space-y-2">
+                <Label>Category</Label>
+                <Select value={editingCard?.category_id || "none"} onValueChange={(val) => editingCard && setEditingCard({ ...editingCard, category_id: val === "none" ? null : val })}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select a category" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="none">No category</SelectItem>
+                    {categories.map((cat) => (
+                      <SelectItem key={cat.id} value={cat.id}>{cat.name}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
             </div>
           )}

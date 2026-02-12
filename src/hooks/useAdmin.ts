@@ -253,6 +253,7 @@ export function useCreateGiftCard() {
       buy_rate?: number;
       sell_rate?: number;
       is_active?: boolean;
+      category_id?: string;
     }) => {
       const { data, error } = await supabase
         .from("gift_cards")
@@ -285,6 +286,7 @@ export function useUpdateGiftCard() {
       buy_rate?: number;
       sell_rate?: number;
       is_active?: boolean;
+      category_id?: string;
     }) => {
       const { data, error } = await supabase
         .from("gift_cards")
