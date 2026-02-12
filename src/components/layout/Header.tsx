@@ -14,6 +14,7 @@ const Header = () => {
     { href: "/", label: "Home" },
     { href: "/sell", label: "Sell Gift Cards" },
     { href: "/buy", label: "Buy Gift Cards" },
+    { href: "/p2p", label: "P2P Market" },
     { href: "/gift-cards", label: "Gift Cards" },
     { href: "/blog", label: "Blog" },
   ];
