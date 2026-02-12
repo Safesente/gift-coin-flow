@@ -4,15 +4,15 @@ import { ArrowRight, Sparkles } from "lucide-react";
 
 const CTA = () => {
   return (
-    <section className="py-24 relative overflow-hidden">
+    <section className="py-24 md:py-32 relative overflow-hidden">
       {/* Background decorations */}
       <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute top-0 left-1/4 w-96 h-96 bg-primary/10 rounded-full blur-3xl" />
-        <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-secondary/10 rounded-full blur-3xl" />
+        <div className="absolute top-0 left-1/4 w-96 h-96 md:w-[600px] md:h-[600px] bg-primary/10 rounded-full blur-3xl md:animate-float" />
+        <div className="absolute bottom-0 right-1/4 w-96 h-96 md:w-[600px] md:h-[600px] bg-secondary/10 rounded-full blur-3xl md:animate-float" style={{ animationDelay: '3s' }} />
       </div>
 
       <div className="container mx-auto relative z-10">
-        <div className="max-w-4xl mx-auto text-center">
+        <div className="max-w-4xl mx-auto text-center md:glass-card md:rounded-3xl md:p-16 md:border md:border-border/50">
           {/* Badge */}
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-secondary/10 border border-secondary/20 mb-8">
             <Sparkles className="w-4 h-4 text-secondary" />
@@ -20,13 +20,13 @@ const CTA = () => {
           </div>
 
           {/* Heading */}
-          <h2 className="text-3xl md:text-5xl font-bold text-foreground mb-6">
+          <h2 className="text-3xl md:text-6xl font-bold text-foreground mb-6">
             Ready to Trade Your{" "}
             <span className="text-gradient-primary">Gift Cards</span>?
           </h2>
 
           {/* Description */}
-          <p className="text-lg text-muted-foreground mb-10 max-w-2xl mx-auto">
+          <p className="text-lg md:text-xl text-muted-foreground mb-10 max-w-2xl mx-auto">
             Join thousands of users who trust gXchange for fast, secure, and reliable gift card transactions. 
             Create your free account in under 2 minutes.
           </p>
