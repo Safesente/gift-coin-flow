@@ -154,6 +154,39 @@ export type Database = {
         }
         Relationships: []
       }
+      gift_card_categories: {
+        Row: {
+          created_at: string
+          featured_image: string | null
+          id: string
+          is_active: boolean
+          name: string
+          slug: string
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          featured_image?: string | null
+          id?: string
+          is_active?: boolean
+          name: string
+          slug: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          featured_image?: string | null
+          id?: string
+          is_active?: boolean
+          name?: string
+          slug?: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
       gift_card_country_rates: {
         Row: {
           buy_rate: number
@@ -204,6 +237,7 @@ export type Database = {
       gift_cards: {
         Row: {
           buy_rate: number
+          category_id: string | null
           created_at: string
           description: string | null
           id: string
@@ -216,6 +250,7 @@ export type Database = {
         }
         Insert: {
           buy_rate?: number
+          category_id?: string | null
           created_at?: string
           description?: string | null
           id?: string
@@ -228,6 +263,7 @@ export type Database = {
         }
         Update: {
           buy_rate?: number
+          category_id?: string | null
           created_at?: string
           description?: string | null
           id?: string
@@ -238,7 +274,15 @@ export type Database = {
           sell_rate?: number
           updated_at?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "gift_cards_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "gift_card_categories"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       profiles: {
         Row: {

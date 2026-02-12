@@ -3,6 +3,7 @@ import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import Hero from "@/components/home/Hero";
 import HowItWorks from "@/components/home/HowItWorks";
+import PopularCategories from "@/components/home/PopularCategories";
 import GiftCardShowcase from "@/components/home/GiftCardShowcase";
 import CTA from "@/components/home/CTA";
 
@@ -36,6 +37,7 @@ const Index = () => {
         <Header />
         <main>
           <Hero />
+          <PopularCategories />
           <HowItWorks />
           <GiftCardShowcase />
           <CTA />
