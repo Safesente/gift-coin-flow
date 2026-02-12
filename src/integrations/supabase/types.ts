@@ -284,6 +284,118 @@ export type Database = {
           },
         ]
       }
+      p2p_listings: {
+        Row: {
+          amount: number
+          card_format: string | null
+          card_name: string
+          category_id: string | null
+          country: string | null
+          created_at: string
+          currency: string
+          description: string | null
+          id: string
+          price: number
+          seller_id: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          amount: number
+          card_format?: string | null
+          card_name: string
+          category_id?: string | null
+          country?: string | null
+          created_at?: string
+          currency?: string
+          description?: string | null
+          id?: string
+          price: number
+          seller_id: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          amount?: number
+          card_format?: string | null
+          card_name?: string
+          category_id?: string | null
+          country?: string | null
+          created_at?: string
+          currency?: string
+          description?: string | null
+          id?: string
+          price?: number
+          seller_id?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "p2p_listings_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "gift_card_categories"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      p2p_trades: {
+        Row: {
+          admin_notes: string | null
+          amount: number
+          buyer_id: string
+          card_code: string | null
+          created_at: string
+          id: string
+          listing_id: string
+          payment_method: string | null
+          payment_proof_url: string | null
+          price: number
+          seller_id: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          admin_notes?: string | null
+          amount: number
+          buyer_id: string
+          card_code?: string | null
+          created_at?: string
+          id?: string
+          listing_id: string
+          payment_method?: string | null
+          payment_proof_url?: string | null
+          price: number
+          seller_id: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          admin_notes?: string | null
+          amount?: number
+          buyer_id?: string
+          card_code?: string | null
+          created_at?: string
+          id?: string
+          listing_id?: string
+          payment_method?: string | null
+          payment_proof_url?: string | null
+          price?: number
+          seller_id?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "p2p_trades_listing_id_fkey"
+            columns: ["listing_id"]
+            isOneToOne: false
+            referencedRelation: "p2p_listings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           avatar_url: string | null

@@ -35,6 +35,7 @@ const navItems = [
   { href: "/admin/country-rates", icon: Globe, label: "Country Rates" },
   { href: "/admin/users", icon: Users, label: "Users" },
   { href: "/admin/email-marketing", icon: Mail, label: "Email Marketing" },
+  { href: "/admin/p2p-trades", icon: Users, label: "P2P Trades" },
   { href: "/admin/blog", icon: FileText, label: "Blog" },
   { href: "/admin/support", icon: MessageCircle, label: "Support Chat" },
   { href: "/admin/contacts", icon: Inbox, label: "Contact Forms" },
