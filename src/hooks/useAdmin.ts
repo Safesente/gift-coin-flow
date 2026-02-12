@@ -11,6 +11,18 @@ export interface GiftCard {
   buy_rate: number;
   sell_rate: number;
   is_active: boolean;
+  category_id: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface GiftCardCategory {
+  id: string;
+  name: string;
+  slug: string;
+  featured_image: string | null;
+  is_active: boolean;
+  sort_order: number;
   created_at: string;
   updated_at: string;
 }
@@ -286,6 +298,117 @@ export function useUpdateGiftCard() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["giftCards"] });
+    },
+  });
+}
+
+// === Gift Card Categories ===
+
+export function usePublicCategories() {
+  return useQuery({
+    queryKey: ["giftCardCategories", "public"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("gift_card_categories")
+        .select("*")
+        .eq("is_active", true)
+        .order("sort_order", { ascending: true });
+      
+      if (error) throw error;
+      return data as GiftCardCategory[];
+    },
+  });
+}
+
+export function useCategories() {
+  const { data: isAdmin, isLoading: isAdminLoading } = useIsAdmin();
+
+  return useQuery({
+    queryKey: ["giftCardCategories", "admin"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("gift_card_categories")
+        .select("*")
+        .order("sort_order", { ascending: true });
+      
+      if (error) throw error;
+      return data as GiftCardCategory[];
+    },
+    enabled: !isAdminLoading && isAdmin === true,
+  });
+}
+
+export function useCreateCategory() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (category: {
+      name: string;
+      slug: string;
+      featured_image?: string;
+      is_active?: boolean;
+      sort_order?: number;
+    }) => {
+      const { data, error } = await supabase
+        .from("gift_card_categories")
+        .insert(category)
+        .select()
+        .single();
+      
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["giftCardCategories"] });
+    },
+  });
+}
+
+export function useUpdateCategory() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({
+      id,
+      ...updates
+    }: {
+      id: string;
+      name?: string;
+      slug?: string;
+      featured_image?: string;
+      is_active?: boolean;
+      sort_order?: number;
+    }) => {
+      const { data, error } = await supabase
+        .from("gift_card_categories")
+        .update(updates)
+        .eq("id", id)
+        .select()
+        .single();
+      
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["giftCardCategories"] });
+    },
+  });
+}
+
+export function useDeleteCategory() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (id: string) => {
+      const { error } = await supabase
+        .from("gift_card_categories")
+        .delete()
+        .eq("id", id);
+      
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["giftCardCategories"] });
     },
   });
 }
