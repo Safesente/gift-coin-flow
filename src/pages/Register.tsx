@@ -90,8 +90,9 @@ const Register = () => {
   return (
     <>
       <Helmet>
-        <title>Register - gXchange | Create Your Account</title>
-        <meta name="description" content="Create your free gXchange account to start buying and selling gift cards instantly." />
+        <title>Create Free Account | Start Selling Gift Cards | gXchange</title>
+        <meta name="description" content="Sign up for free on gXchange to sell gift cards for instant cash or buy discounted gift cards. Join 50,000+ users today." />
+        <link rel="canonical" href="https://gxchange.cards/register" />
       </Helmet>
 
       <div className="min-h-screen bg-gradient-hero flex items-center justify-center p-4">

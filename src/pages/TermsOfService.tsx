@@ -6,8 +6,9 @@ const TermsOfService = () => {
   return (
     <>
       <Helmet>
-        <title>Terms of Service - GXchange</title>
-        <meta name="description" content="GXchange Terms of Service - Read our terms and conditions for using our gift card exchange platform." />
+        <title>Terms of Service | gXchange Gift Card Exchange</title>
+        <meta name="description" content="gXchange Terms of Service — Rules and conditions for using our gift card exchange marketplace to buy and sell gift cards." />
+        <link rel="canonical" href="https://gxchange.cards/terms-of-service" />
       </Helmet>
       
       <div className="min-h-screen flex flex-col bg-background">

@@ -5,30 +5,54 @@ import Hero from "@/components/home/Hero";
 import HowItWorks from "@/components/home/HowItWorks";
 import PopularCategories from "@/components/home/PopularCategories";
 import GiftCardShowcase from "@/components/home/GiftCardShowcase";
+import Features from "@/components/home/Features";
 import CTA from "@/components/home/CTA";
 
 const Index = () => {
   return (
     <>
       <Helmet>
-        <title>gXchange - Buy & Sell Gift Cards Instantly | Best Rates</title>
+        <title>gXchange - Sell Gift Cards Online for Instant Cash | Buy Discounted Gift Cards</title>
         <meta
           name="description"
-          content="Trade gift cards instantly on gXchange. Get competitive rates on all major brands. Fast, secure transactions with PayPal, Skrill, Google Pay & Binance Pay."
+          content="Sell gift cards online for instant payout via PayPal or Binance Pay. Buy discounted gift cards at up to 15% off. Amazon, Apple, Steam & 100+ brands. Trusted by 50,000+ users."
         />
         <meta
           name="keywords"
-          content="gift cards, sell gift cards, buy gift cards, amazon gift card, apple gift card, steam gift card, gift card exchange"
+          content="sell gift cards online, buy discounted gift cards, gift card exchange, instant payout gift cards, gift card marketplace, sell gift cards for cash, buy gift cards online"
         />
         <link rel="canonical" href="https://gxchange.cards/" />
+        <meta property="og:title" content="gXchange - Sell Gift Cards for Instant Cash | Buy Discounted Gift Cards" />
+        <meta property="og:description" content="The #1 gift card exchange marketplace. Sell gift cards for instant payout or buy at up to 15% off. 100+ brands supported." />
+        <meta property="og:url" content="https://gxchange.cards/" />
+        <meta property="og:type" content="website" />
         <script type="application/ld+json">
           {JSON.stringify({
             "@context": "https://schema.org",
-            "@type": "FinancialService",
+            "@type": "WebSite",
             name: "gXchange",
-            description: "Buy and sell gift cards instantly with the best rates",
-            url: "https://gxchange.com",
-            serviceType: "Gift Card Exchange",
+            url: "https://gxchange.cards",
+            description: "Buy and sell gift cards online with instant payout. The trusted gift card exchange marketplace.",
+            potentialAction: {
+              "@type": "SearchAction",
+              target: "https://gxchange.cards/gift-cards?q={search_term_string}",
+              "query-input": "required name=search_term_string",
+            },
+          })}
+        </script>
+        <script type="application/ld+json">
+          {JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "Organization",
+            name: "gXchange",
+            url: "https://gxchange.cards",
+            logo: "https://gxchange.cards/favicon.png",
+            sameAs: [],
+            contactPoint: {
+              "@type": "ContactPoint",
+              contactType: "customer service",
+              url: "https://gxchange.cards/contact",
+            },
           })}
         </script>
       </Helmet>
@@ -40,6 +64,7 @@ const Index = () => {
           <PopularCategories />
           <HowItWorks />
           <GiftCardShowcase />
+          <Features />
           <CTA />
         </main>
         <Footer />
