@@ -6,8 +6,9 @@ const PrivacyPolicy = () => {
   return (
     <>
       <Helmet>
-        <title>Privacy Policy - GXchange</title>
-        <meta name="description" content="GXchange Privacy Policy - Learn how we collect, use, and protect your personal information." />
+        <title>Privacy Policy | gXchange Gift Card Exchange</title>
+        <meta name="description" content="gXchange Privacy Policy — How we protect your personal information when you buy and sell gift cards on our platform." />
+        <link rel="canonical" href="https://gxchange.cards/privacy-policy" />
       </Helmet>
       
       <div className="min-h-screen flex flex-col bg-background">

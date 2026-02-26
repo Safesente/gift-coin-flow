@@ -5,8 +5,6 @@ import { usePublicGiftCards } from "@/hooks/useAdmin";
 
 const GiftCardShowcase = () => {
   const { data: giftCards = [], isLoading } = usePublicGiftCards();
-  
-  // Show first 12 cards on homepage
   const displayCards = giftCards.slice(0, 12);
 
   if (isLoading) {
@@ -22,20 +20,19 @@ const GiftCardShowcase = () => {
   return (
     <section className="py-24">
       <div className="container mx-auto">
-        {/* Section Header */}
         <div className="text-center mb-16">
           <span className="inline-block px-4 py-1.5 rounded-full bg-secondary/10 text-secondary text-sm font-medium mb-4">
-            Supported Cards
+            100+ Brands Supported
           </span>
           <h2 className="text-3xl md:text-5xl font-bold text-foreground mb-4">
-            {giftCards.length}+ Gift Cards Supported
+            Buy or Sell {giftCards.length}+ Gift Card Brands
           </h2>
           <p className="text-muted-foreground max-w-2xl mx-auto md:text-lg">
-            Trade all major gift card brands with competitive rates and instant processing.
+            Trade all major gift card brands with competitive rates. 
+            Sell gift cards for instant cash or buy discounted gift cards below face value.
           </p>
         </div>
 
-        {/* Gift Cards Grid */}
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4 md:gap-5 mb-12">
           {displayCards.map((card) => (
             <Link
@@ -47,8 +44,9 @@ const GiftCardShowcase = () => {
                 {card.logo_url ? (
                   <img 
                     src={card.logo_url} 
-                    alt={card.name} 
+                    alt={`${card.name} gift card - buy or sell on gXchange`}
                     className="w-8 h-8 md:w-10 md:h-10 object-contain"
+                    loading="lazy"
                     onError={(e) => {
                       const target = e.target as HTMLImageElement;
                       target.style.display = 'none';
@@ -70,7 +68,6 @@ const GiftCardShowcase = () => {
           ))}
         </div>
 
-        {/* CTA */}
         <div className="text-center">
           <Link to="/gift-cards">
             <Button variant="outline" size="lg" className="gap-2 md:text-base md:px-8 md:py-6">

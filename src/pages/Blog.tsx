@@ -74,8 +74,9 @@ const Blog = () => {
   return (
     <>
       <Helmet>
-        <title>Blog - GXchange</title>
-        <meta name="description" content="Read our latest articles about gift cards, crypto, and digital payments." />
+        <title>Gift Card Trading Blog | Tips & Guides | gXchange</title>
+        <meta name="description" content="Expert tips on selling gift cards online, buying discounted gift cards, and maximizing your gift card exchange value. Guides for Amazon, Apple, Steam & more." />
+        <link rel="canonical" href="https://gxchange.cards/blog" />
       </Helmet>
 
       <div className="min-h-screen flex flex-col bg-background">
@@ -85,10 +86,10 @@ const Blog = () => {
           <div className="max-w-5xl mx-auto">
             <div className="text-center mb-8 md:mb-12">
               <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-                Our Blog
+                Gift Card Trading Blog
               </h1>
               <p className="text-muted-foreground text-lg">
-                Latest news, tips, and insights about gift cards and digital payments
+                Expert tips, guides, and insights on how to sell gift cards online and buy discounted gift cards
               </p>
             </div>
 
