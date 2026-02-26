@@ -126,13 +126,11 @@ const Buy = () => {
   return (
     <>
       <Helmet>
-        <title>Buy Discounted Gift Cards Online | Up to 15% Off | gXchange</title>
+        <title>Buy Gift Cards - gXchange | Get 15% Off All Cards</title>
         <meta
           name="description"
-          content="Buy discounted gift cards online at gXchange. Save up to 15% on Amazon, Apple, Steam, Netflix & 100+ brands. Instant delivery, secure checkout."
+          content="Buy gift cards at discounted prices on gXchange. Amazon, Apple, Steam, Netflix and 50+ more brands available."
         />
-        <meta name="keywords" content="buy gift cards, buy discounted gift cards, cheap gift cards, gift card deals, buy gift cards online" />
-        <link rel="canonical" href="https://gxchange.cards/buy" />
       </Helmet>
 
       <div className="min-h-screen bg-gradient-hero">

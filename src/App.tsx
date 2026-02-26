@@ -11,15 +11,12 @@ import { VisitorTracker } from "@/components/VisitorTracker";
 import Index from "./pages/Index";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
+
 import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
 import GiftCards from "./pages/GiftCards";
 import Sell from "./pages/Sell";
 import Buy from "./pages/Buy";
-import SellGiftCards from "./pages/SellGiftCards";
-import BuyGiftCards from "./pages/BuyGiftCards";
-import BrandBuy from "./pages/BrandBuy";
-import BrandSell from "./pages/BrandSell";
 import Dashboard from "./pages/Dashboard";
 import AccountSettings from "./pages/AccountSettings";
 import HelpCenter from "./pages/HelpCenter";
@@ -37,6 +34,7 @@ import AdminBlog from "./pages/admin/AdminBlog";
 import AdminAnalytics from "./pages/admin/AdminAnalytics";
 import AdminHeatmaps from "./pages/admin/AdminHeatmaps";
 import AdminCategories from "./pages/admin/AdminCategories";
+import P2PMarketplace from "./pages/P2PMarketplace";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import TermsOfService from "./pages/TermsOfService";
 import Blog from "./pages/Blog";
@@ -58,18 +56,12 @@ const App = () => (
               <Route path="/" element={<Index />} />
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
+              
               <Route path="/forgot-password" element={<ForgotPassword />} />
               <Route path="/reset-password" element={<ResetPassword />} />
               <Route path="/gift-cards" element={<GiftCards />} />
               <Route path="/sell" element={<Sell />} />
               <Route path="/buy" element={<Buy />} />
-              
-              {/* SEO Landing Pages */}
-              <Route path="/sell-gift-cards" element={<SellGiftCards />} />
-              <Route path="/buy-gift-cards" element={<BuyGiftCards />} />
-              <Route path="/buy-:brand-gift-card" element={<BrandBuy />} />
-              <Route path="/sell-:brand-gift-card" element={<BrandSell />} />
-              
               <Route path="/help" element={<HelpCenter />} />
               <Route path="/contact" element={<ContactUs />} />
               <Route path="/faq" element={<FAQ />} />
@@ -78,23 +70,119 @@ const App = () => (
               <Route path="/blog" element={<Blog />} />
               <Route path="/blog/:slug" element={<BlogPost />} />
               
-              <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
-              <Route path="/settings" element={<ProtectedRoute><AccountSettings /></ProtectedRoute>} />
-              
+              <Route
+                path="/dashboard"
+                element={
+                  <ProtectedRoute>
+                    <Dashboard />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/settings"
+                element={
+                  <ProtectedRoute>
+                    <AccountSettings />
+                  </ProtectedRoute>
+                }
+              />
               {/* Admin Routes */}
-              <Route path="/admin" element={<AdminProtectedRoute><AdminOverview /></AdminProtectedRoute>} />
-              <Route path="/admin/orders" element={<AdminProtectedRoute><AdminOrders /></AdminProtectedRoute>} />
-              <Route path="/admin/cards" element={<AdminProtectedRoute><AdminCards /></AdminProtectedRoute>} />
-              <Route path="/admin/users" element={<AdminProtectedRoute><AdminUsers /></AdminProtectedRoute>} />
-              <Route path="/admin/email-marketing" element={<AdminProtectedRoute><AdminEmailMarketing /></AdminProtectedRoute>} />
-              <Route path="/admin/country-rates" element={<AdminProtectedRoute><AdminCountryRates /></AdminProtectedRoute>} />
-              <Route path="/admin/support" element={<AdminProtectedRoute><AdminSupport /></AdminProtectedRoute>} />
-              <Route path="/admin/contacts" element={<AdminProtectedRoute><AdminContacts /></AdminProtectedRoute>} />
-              <Route path="/admin/blog" element={<AdminProtectedRoute><AdminBlog /></AdminProtectedRoute>} />
-              <Route path="/admin/analytics" element={<AdminProtectedRoute><AdminAnalytics /></AdminProtectedRoute>} />
-              <Route path="/admin/heatmaps" element={<AdminProtectedRoute><AdminHeatmaps /></AdminProtectedRoute>} />
-              <Route path="/admin/categories" element={<AdminProtectedRoute><AdminCategories /></AdminProtectedRoute>} />
-              
+              <Route
+                path="/admin"
+                element={
+                  <AdminProtectedRoute>
+                    <AdminOverview />
+                  </AdminProtectedRoute>
+                }
+              />
+              <Route
+                path="/admin/orders"
+                element={
+                  <AdminProtectedRoute>
+                    <AdminOrders />
+                  </AdminProtectedRoute>
+                }
+              />
+              <Route
+                path="/admin/cards"
+                element={
+                  <AdminProtectedRoute>
+                    <AdminCards />
+                  </AdminProtectedRoute>
+                }
+              />
+              <Route
+                path="/admin/users"
+                element={
+                  <AdminProtectedRoute>
+                    <AdminUsers />
+                  </AdminProtectedRoute>
+                }
+              />
+              <Route
+                path="/admin/email-marketing"
+                element={
+                  <AdminProtectedRoute>
+                    <AdminEmailMarketing />
+                  </AdminProtectedRoute>
+                }
+              />
+              <Route
+                path="/admin/country-rates"
+                element={
+                  <AdminProtectedRoute>
+                    <AdminCountryRates />
+                  </AdminProtectedRoute>
+                }
+              />
+              <Route
+                path="/admin/support"
+                element={
+                  <AdminProtectedRoute>
+                    <AdminSupport />
+                  </AdminProtectedRoute>
+                }
+              />
+              <Route
+                path="/admin/contacts"
+                element={
+                  <AdminProtectedRoute>
+                    <AdminContacts />
+                  </AdminProtectedRoute>
+                }
+              />
+              <Route
+                path="/admin/blog"
+                element={
+                  <AdminProtectedRoute>
+                    <AdminBlog />
+                  </AdminProtectedRoute>
+                }
+              />
+              <Route
+                path="/admin/analytics"
+                element={
+                  <AdminProtectedRoute>
+                    <AdminAnalytics />
+                  </AdminProtectedRoute>
+                }
+              />
+              <Route
+                path="/admin/heatmaps"
+                element={
+                  <AdminProtectedRoute>
+                    <AdminHeatmaps />
+                  </AdminProtectedRoute>
+                }
+              />
+              <Route
+                path="/admin/categories"
+                element={
+                  <AdminProtectedRoute>
+                    <AdminCategories />
+                  </AdminProtectedRoute>
+                }
+              />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
             </Routes>

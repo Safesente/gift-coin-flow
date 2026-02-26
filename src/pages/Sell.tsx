@@ -178,13 +178,11 @@ const Sell = () => {
   return (
     <>
       <Helmet>
-        <title>Sell Gift Cards Online for Cash | Instant Payout | gXchange</title>
+        <title>Sell Gift Cards - gXchange | Get Paid Instantly</title>
         <meta
           name="description"
-          content="Sell your gift cards online for instant cash. Get paid via PayPal or Binance Pay within 1 hour. Best rates for Amazon, Apple, Steam & 100+ brands."
+          content="Sell your gift cards on gXchange. Fast payout via PayPal or Binance Pay."
         />
-        <meta name="keywords" content="sell gift cards, sell gift cards online, gift card exchange, instant payout gift cards, sell gift cards for cash" />
-        <link rel="canonical" href="https://gxchange.cards/sell" />
       </Helmet>
 
       <div className="min-h-screen bg-gradient-hero">

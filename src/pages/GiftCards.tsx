@@ -19,13 +19,11 @@ const GiftCards = () => {
   return (
     <>
       <Helmet>
-        <title>{`Gift Card Exchange | Buy or Sell ${giftCards.length}+ Brands | gXchange`}</title>
+        <title>{`All Gift Cards - gXchange | ${giftCards.length}+ Brands Available`}</title>
         <meta
           name="description"
-          content="Browse 100+ gift card brands on gXchange. Sell gift cards for instant cash or buy at discounted prices. Amazon, Apple, Steam, Netflix & more with best exchange rates."
+          content="Browse all gift cards available on gXchange. Amazon, Apple, Steam, Netflix, PlayStation, Xbox, and more brands with the best rates."
         />
-        <meta name="keywords" content="gift card exchange, all gift cards, gift card brands, sell gift cards, buy gift cards" />
-        <link rel="canonical" href="https://gxchange.cards/gift-cards" />
       </Helmet>
 
       <div className="min-h-screen bg-background">
@@ -36,10 +34,10 @@ const GiftCards = () => {
             {/* Page Header */}
             <div className="text-center mb-12">
               <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-                Gift Card Exchange — {giftCards.length}+ Brands
+                All Gift Cards
               </h1>
               <p className="text-muted-foreground max-w-2xl mx-auto">
-                Sell gift cards for instant cash or buy at discounted rates. Browse {giftCards.length}+ major brands with competitive exchange rates.
+                Choose from {giftCards.length}+ major gift card brands. Check rates for each card.
               </p>
             </div>
 
