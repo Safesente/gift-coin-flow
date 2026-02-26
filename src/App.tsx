@@ -34,7 +34,6 @@ import AdminBlog from "./pages/admin/AdminBlog";
 import AdminAnalytics from "./pages/admin/AdminAnalytics";
 import AdminHeatmaps from "./pages/admin/AdminHeatmaps";
 import AdminCategories from "./pages/admin/AdminCategories";
-import AdminP2PTrades from "./pages/admin/AdminP2PTrades";
 import P2PMarketplace from "./pages/P2PMarketplace";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import TermsOfService from "./pages/TermsOfService";
@@ -70,7 +69,7 @@ const App = () => (
               <Route path="/terms-of-service" element={<TermsOfService />} />
               <Route path="/blog" element={<Blog />} />
               <Route path="/blog/:slug" element={<BlogPost />} />
-              <Route path="/p2p" element={<P2PMarketplace />} />
+              
               <Route
                 path="/dashboard"
                 element={
@@ -181,14 +180,6 @@ const App = () => (
                 element={
                   <AdminProtectedRoute>
                     <AdminCategories />
-                  </AdminProtectedRoute>
-                }
-              />
-              <Route
-                path="/admin/p2p-trades"
-                element={
-                  <AdminProtectedRoute>
-                    <AdminP2PTrades />
                   </AdminProtectedRoute>
                 }
               />
