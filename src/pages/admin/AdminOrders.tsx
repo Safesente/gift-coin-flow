@@ -19,7 +19,7 @@ export default function AdminOrders() {
   const { data: transactions = [], isLoading: loadingTransactions } = useAllTransactions();
   const { data: profiles = [], isLoading: loadingProfiles } = useAllProfiles();
   
-  const [statusFilter, setStatusFilter] = useState<"all" | "pending" | "completed">("all");
+  const [statusFilter, setStatusFilter] = useState<"all" | "pending" | "paid" | "completed" | "cancelled">("all");
   const [typeFilter, setTypeFilter] = useState<"all" | "buy" | "sell">("all");
 
   const profilesMap = profiles.reduce((acc, p) => {
@@ -30,6 +30,9 @@ export default function AdminOrders() {
   const isLoading = loadingTransactions || loadingProfiles;
 
   const pendingCount = transactions.filter((t) => t.status === "pending").length;
+  const paidCount = transactions.filter((t) => t.status === "paid").length;
+  const completedCount = transactions.filter((t) => t.status === "completed").length;
+  const cancelledCount = transactions.filter((t) => t.status === "cancelled").length;
   const buyCount = transactions.filter((t) => t.type === "buy").length;
   const sellCount = transactions.filter((t) => t.type === "sell").length;
 
@@ -62,6 +65,21 @@ export default function AdminOrders() {
                 {pendingCount} pending
               </Badge>
             )}
+            {paidCount > 0 && (
+              <Badge className="bg-blue-500/20 text-blue-600 border-blue-500/30">
+                {paidCount} paid
+              </Badge>
+            )}
+            {completedCount > 0 && (
+              <Badge className="bg-green-500/20 text-green-600 border-green-500/30">
+                {completedCount} completed
+              </Badge>
+            )}
+            {cancelledCount > 0 && (
+              <Badge className="bg-red-500/20 text-red-600 border-red-500/30">
+                {cancelledCount} cancelled
+              </Badge>
+            )}
           </div>
         </div>
 
@@ -79,8 +97,10 @@ export default function AdminOrders() {
               <DropdownMenuSeparator />
               <DropdownMenuRadioGroup value={statusFilter} onValueChange={(v) => setStatusFilter(v as typeof statusFilter)}>
                 <DropdownMenuRadioItem value="all">All</DropdownMenuRadioItem>
-                <DropdownMenuRadioItem value="pending">Pending</DropdownMenuRadioItem>
-                <DropdownMenuRadioItem value="completed">Completed</DropdownMenuRadioItem>
+                <DropdownMenuRadioItem value="pending">Pending ({pendingCount})</DropdownMenuRadioItem>
+                <DropdownMenuRadioItem value="paid">Paid ({paidCount})</DropdownMenuRadioItem>
+                <DropdownMenuRadioItem value="completed">Completed ({completedCount})</DropdownMenuRadioItem>
+                <DropdownMenuRadioItem value="cancelled">Cancelled ({cancelledCount})</DropdownMenuRadioItem>
               </DropdownMenuRadioGroup>
             </DropdownMenuContent>
           </DropdownMenu>

@@ -29,7 +29,7 @@ import { countries, cardFormats } from "@/data/giftCards";
 interface OrdersTableProps {
   transactions: AdminTransaction[];
   profiles: Record<string, { email: string | null; full_name: string | null }>;
-  filter?: "all" | "pending" | "completed";
+  filter?: "all" | "pending" | "paid" | "completed" | "cancelled";
   type?: "all" | "buy" | "sell";
 }
 
@@ -51,8 +51,7 @@ export function OrdersTable({ transactions, profiles, filter = "all", type = "al
   const [screenshotUrl, setScreenshotUrl] = useState<string | null>(null);
 
   const filteredTransactions = transactions.filter((t) => {
-    if (filter !== "all" && filter === "pending" && t.status !== "pending") return false;
-    if (filter !== "all" && filter === "completed" && t.status !== "completed") return false;
+    if (filter !== "all" && t.status !== filter) return false;
     if (type !== "all" && t.type !== type) return false;
     return true;
   });
