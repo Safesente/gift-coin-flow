@@ -43,8 +43,26 @@ const FAQ = () => {
   return (
     <>
       <Helmet>
-        <title>Frequently Asked Questions - gXchange</title>
-        <meta name="description" content="Find answers to commonly asked questions about buying and selling gift cards on gXchange." />
+        <title>FAQ - Gift Card Trading Questions | gXchange</title>
+        <meta name="description" content="Find answers to common questions about buying and selling gift cards on gXchange. Learn about rates, payment methods, processing times, and security." />
+        <link rel="canonical" href="https://gxchange.cards/faq" />
+        <meta property="og:title" content="FAQ - Gift Card Trading Questions | gXchange" />
+        <meta property="og:description" content="Find answers to common questions about buying and selling gift cards on gXchange." />
+        <meta property="og:url" content="https://gxchange.cards/faq" />
+        <script type="application/ld+json">
+          {JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "FAQPage",
+            mainEntity: faqItems.map((item) => ({
+              "@type": "Question",
+              name: item.question,
+              acceptedAnswer: {
+                "@type": "Answer",
+                text: item.answer,
+              },
+            })),
+          })}
+        </script>
       </Helmet>
 
       <Header />
