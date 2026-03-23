@@ -35,7 +35,7 @@ const PopularCategories = () => {
                   ) : (
                     <div className="absolute inset-0 bg-primary/20" />
                   )}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+                  <div className="absolute inset-0 bg-black/40" />
                   <div className="absolute bottom-0 left-0 right-0 p-3 md:p-5 flex items-end justify-between">
                     <h3 className="text-sm md:text-xl font-bold text-white leading-tight">
                       {category.name}
