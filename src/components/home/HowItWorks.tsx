@@ -47,7 +47,7 @@ const HowItWorks = () => {
         {/* Steps - Desktop: horizontal timeline */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 md:gap-6 relative">
           {/* Desktop connecting line */}
-          <div className="hidden md:block absolute top-14 left-[12.5%] right-[12.5%] h-px bg-gradient-to-r from-primary/30 via-secondary/30 to-primary/30" />
+          <div className="hidden md:block absolute top-14 left-[12.5%] right-[12.5%] h-px bg-border" />
 
           {steps.map((step, index) => (
             <div key={step.title} className="relative group">

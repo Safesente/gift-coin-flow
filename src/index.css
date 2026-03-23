@@ -44,15 +44,10 @@
     --radius: 0.75rem;
 
     /* Custom tokens */
-    --gradient-primary: linear-gradient(135deg, hsl(160 84% 39%), hsl(160 84% 50%));
-    --gradient-gold: linear-gradient(135deg, hsl(38 92% 50%), hsl(45 93% 58%));
-    --gradient-hero: linear-gradient(180deg, hsl(160 30% 97%) 0%, hsl(40 20% 99%) 100%);
-    --gradient-card: linear-gradient(145deg, hsla(0, 0%, 100%, 0.9), hsla(0, 0%, 100%, 0.6));
-    
-    --shadow-soft: 0 4px 20px -4px hsla(220, 20%, 10%, 0.08);
-    --shadow-medium: 0 8px 30px -6px hsla(220, 20%, 10%, 0.12);
-    --shadow-glow: 0 0 40px hsla(160, 84%, 39%, 0.2);
-    --shadow-gold: 0 4px 20px -4px hsla(38, 92%, 50%, 0.3);
+    --shadow-soft: 0 1px 3px hsla(220, 20%, 10%, 0.06);
+    --shadow-medium: 0 4px 12px hsla(220, 20%, 10%, 0.1);
+    --shadow-glow: 0 2px 8px hsla(220, 20%, 10%, 0.08);
+    --shadow-gold: 0 2px 8px hsla(38, 92%, 50%, 0.15);
 
     /* Status colors */
     --status-pending: 38 92% 50%;
@@ -99,8 +94,8 @@
     --input: 220 15% 20%;
     --ring: 160 70% 45%;
 
-    --gradient-hero: linear-gradient(180deg, hsl(220 20% 10%) 0%, hsl(220 20% 8%) 100%);
-    --gradient-card: linear-gradient(145deg, hsla(220, 20%, 15%, 0.9), hsla(220, 20%, 12%, 0.6));
+    --shadow-soft: 0 1px 3px hsla(220, 20%, 10%, 0.2);
+    --shadow-medium: 0 4px 12px hsla(220, 20%, 10%, 0.3);
 
     --sidebar-background: 220 20% 10%;
     --sidebar-foreground: 40 20% 90%;
@@ -129,12 +124,12 @@
 
 @layer components {
   .glass-card {
-    @apply bg-card/80 backdrop-blur-xl border border-border/50;
+    @apply bg-card border border-border;
     box-shadow: var(--shadow-soft);
   }
 
   .glow-primary {
-    box-shadow: var(--shadow-glow);
+    box-shadow: var(--shadow-soft);
   }
 
   .glow-gold {
@@ -142,17 +137,15 @@
   }
 
   .text-gradient-primary {
-    @apply bg-clip-text text-transparent;
-    background-image: var(--gradient-primary);
+    @apply text-primary;
   }
 
   .text-gradient-gold {
-    @apply bg-clip-text text-transparent;
-    background-image: var(--gradient-gold);
+    @apply text-secondary;
   }
 
   .bg-gradient-hero {
-    background: var(--gradient-hero);
+    @apply bg-background;
   }
 
   .animate-float {
