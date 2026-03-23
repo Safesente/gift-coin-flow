@@ -9,15 +9,15 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        default: "bg-primary text-primary-foreground hover:bg-primary/90 shadow-soft hover:shadow-glow active:scale-[0.98]",
-        destructive: "bg-destructive text-destructive-foreground hover:bg-destructive/90 shadow-soft active:scale-[0.98]",
+        default: "bg-primary text-primary-foreground hover:bg-primary/90 active:scale-[0.98]",
+        destructive: "bg-destructive text-destructive-foreground hover:bg-destructive/90 active:scale-[0.98]",
         outline: "border border-input bg-background hover:bg-accent hover:text-accent-foreground active:scale-[0.98]",
-        secondary: "bg-secondary text-secondary-foreground hover:bg-secondary/90 shadow-soft active:scale-[0.98]",
+        secondary: "bg-secondary text-secondary-foreground hover:bg-secondary/90 active:scale-[0.98]",
         ghost: "hover:bg-accent hover:text-accent-foreground",
         link: "text-primary underline-offset-4 hover:underline",
-        hero: "bg-primary text-primary-foreground hover:bg-primary/90 shadow-glow hover:shadow-[0_0_50px_hsla(160,84%,39%,0.35)] active:scale-[0.98] text-base",
+        hero: "bg-primary text-primary-foreground hover:bg-primary/90 active:scale-[0.98] text-base",
         heroSecondary: "bg-card text-foreground border border-border hover:bg-accent hover:border-primary/30 active:scale-[0.98] text-base",
-        gold: "bg-gradient-to-r from-[hsl(38,92%,50%)] to-[hsl(45,93%,58%)] text-white shadow-gold hover:shadow-[0_6px_24px_hsla(38,92%,50%,0.4)] active:scale-[0.98]",
+        gold: "bg-secondary text-secondary-foreground hover:bg-secondary/90 active:scale-[0.98]",
       },
       size: {
         default: "h-10 px-5 py-2",
