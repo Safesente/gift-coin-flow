@@ -1,8 +1,14 @@
 User-agent: Googlebot
 Allow: /
+Disallow: /admin
+Disallow: /dashboard
+Disallow: /settings
 
 User-agent: Bingbot
 Allow: /
+Disallow: /admin
+Disallow: /dashboard
+Disallow: /settings
 
 User-agent: Twitterbot
 Allow: /
@@ -12,5 +18,10 @@ Allow: /
 
 User-agent: *
 Allow: /
+Disallow: /admin
+Disallow: /dashboard
+Disallow: /settings
+Disallow: /reset-password
+Disallow: /forgot-password
 
 Sitemap: https://gxchange.cards/sitemap.xml
