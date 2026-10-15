@@ -1,53 +1,25 @@
 import { Link } from "react-router-dom";
-import { ChevronRight } from "lucide-react";
+import { ArrowUpRight } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { usePublicCategories } from "@/hooks/useAdmin";
 
 const PopularCategories = () => {
   const { data: categories = [], isLoading } = usePublicCategories();
-
   if (!isLoading && categories.length === 0) return null;
-
   return (
-    <section className="py-16 md:py-20">
-      <div className="container mx-auto">
-        <h2 className="text-2xl md:text-4xl font-bold text-foreground mb-8 md:mb-10">
-          Popular categories
-        </h2>
-
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4">
-          {isLoading
-            ? Array.from({ length: 8 }).map((_, i) => (
-                <Skeleton key={i} className="aspect-[4/3] md:aspect-[16/10] rounded-2xl md:rounded-3xl" />
-              ))
-            : categories.map((category) => (
-                <Link
-                  key={category.id}
-                  to={`/gift-cards?category=${category.slug}`}
-                  className="group relative aspect-[4/3] md:aspect-[16/10] rounded-2xl md:rounded-3xl overflow-hidden block"
-                >
-                  {category.featured_image ? (
-                    <img
-                      src={category.featured_image}
-                      alt={category.name}
-                      className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                    />
-                  ) : (
-                    <div className="absolute inset-0 bg-primary/20" />
-                  )}
-                  <div className="absolute inset-0 bg-black/40" />
-                  <div className="absolute bottom-0 left-0 right-0 p-3 md:p-5 flex items-end justify-between">
-                    <h3 className="text-sm md:text-xl font-bold text-white leading-tight">
-                      {category.name}
-                    </h3>
-                    <ChevronRight className="w-4 h-4 md:w-5 md:h-5 text-white/80 flex-shrink-0 transition-transform duration-300 group-hover:translate-x-1" />
-                  </div>
-                </Link>
-              ))}
+    <section className="home-section">
+      <div className="container">
+        <div className="home-section-header"><div><p className="home-label">Find your next favourite</p><h2 className="home-heading">Popular categories.</h2></div><Link to="/gift-cards" className="home-text-link">Explore all <ArrowUpRight className="h-4 w-4" /></Link></div>
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
+          {isLoading ? Array.from({ length: 4 }).map((_, i) => <Skeleton key={i} className="aspect-[4/3] rounded-md" />) : categories.map(category => (
+            <Link key={category.id} to={`/gift-cards?category=${category.slug}`} className="group min-w-0">
+              <div className="relative aspect-[4/3] rounded-md overflow-hidden bg-muted">{category.featured_image ? <img src={category.featured_image} alt={category.name} loading="lazy" className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]" /> : <div className="flex h-full items-center justify-center text-primary text-4xl font-semibold">{category.name.charAt(0)}</div>}</div>
+              <div className="flex justify-between items-center gap-2 mt-4"><h3 className="font-semibold text-sm md:text-lg break-words">{category.name}</h3><ArrowUpRight className="h-5 w-5 shrink-0 text-muted-foreground group-hover:text-primary" /></div>
+            </Link>
+          ))}
         </div>
       </div>
     </section>
   );
 };
-
 export default PopularCategories;

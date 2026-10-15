@@ -19,10 +19,12 @@ const Header = () => {
     { href: "/blog", label: "Blog" },
   ];
 
+  const isHomepage = location.pathname === "/" || location.pathname === "/index";
+
   const isActive = (path: string) => location.pathname === path;
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 bg-background/60 backdrop-blur-2xl border-b border-border/30 md:bg-background/40">
+    <header className={isHomepage ? "home-header fixed top-0 left-0 right-0 z-50 bg-background border-b border-border" : "fixed top-0 left-0 right-0 z-50 bg-background/60 backdrop-blur-2xl border-b border-border/30 md:bg-background/40"}>
       <div className="container mx-auto">
         <div className="flex items-center justify-between h-16 md:h-20">
           {/* Logo */}
@@ -81,12 +83,16 @@ const Header = () => {
           </div>
 
           {/* Mobile Menu Button */}
-          <button
-            className="md:hidden p-2 rounded-lg hover:bg-muted transition-colors"
+          <Button
+            variant="ghost"
+            size="icon"
+            className="md:hidden"
+            aria-label={isMenuOpen ? "Close menu" : "Open menu"}
+            aria-expanded={isMenuOpen}
             onClick={() => setIsMenuOpen(!isMenuOpen)}
           >
             {isMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-          </button>
+          </Button>
         </div>
 
         {/* Mobile Menu */}
