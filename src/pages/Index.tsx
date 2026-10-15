@@ -62,7 +62,7 @@ const Index = () => {
         </script>
       </Helmet>
 
-      <div className="min-h-screen bg-background">
+      <div className="homepage min-h-screen bg-background">
         <Header />
         <main>
           <Hero />

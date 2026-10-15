@@ -1,4 +1,4 @@
-import { Star, Quote } from "lucide-react";
+import { Star } from "lucide-react";
 
 const reviews = [
   {
@@ -39,63 +39,14 @@ const reviews = [
   },
 ];
 
-const Reviews = () => {
-  return (
-    <section className="py-20 md:py-28 bg-muted/30">
-      <div className="container mx-auto">
-        {/* Heading */}
-        <div className="text-center mb-12 md:mb-16">
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-card border border-border mb-6">
-            <Star className="w-4 h-4 text-secondary" />
-            <span className="text-sm font-medium text-foreground">4.9/5 from 2,000+ reviews</span>
-          </div>
-          <h2 className="text-3xl md:text-5xl font-bold text-foreground mb-4">
-            What Our <span className="text-primary">Customers Say</span>
-          </h2>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Real feedback from traders across Africa who buy and sell gift cards with gXchange.
-          </p>
-        </div>
-
-        {/* Reviews Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {reviews.map((review) => (
-            <div
-              key={review.name}
-              className="bg-card border border-border rounded-2xl p-6 flex flex-col hover:shadow-medium transition-shadow duration-200"
-            >
-              <Quote className="w-6 h-6 text-primary/40 mb-4" />
-              {/* Stars */}
-              <div className="flex gap-1 mb-3">
-                {Array.from({ length: 5 }).map((_, i) => (
-                  <Star
-                    key={i}
-                    className={`w-4 h-4 ${
-                      i < review.rating ? "text-secondary fill-secondary" : "text-muted-foreground/30"
-                    }`}
-                  />
-                ))}
-              </div>
-              {/* Text */}
-              <p className="text-sm text-muted-foreground leading-relaxed flex-1">
-                "{review.text}"
-              </p>
-              {/* Author */}
-              <div className="flex items-center gap-3 mt-5 pt-5 border-t border-border">
-                <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary font-semibold text-sm">
-                  {review.name.charAt(0)}
-                </div>
-                <div>
-                  <p className="text-sm font-semibold text-foreground">{review.name}</p>
-                  <p className="text-xs text-muted-foreground">{review.location}</p>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
+const Reviews = () => (
+  <section className="home-reviews">
+    <div className="container">
+      <div className="home-section-header"><div><p className="home-label">The other side of the trade</p><h2 className="home-heading">Customer stories.</h2></div><p className="max-w-xs text-sm text-muted-foreground">Buying, selling, and getting a little more from every gift card.</p></div>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-10 gap-y-10">
+        {reviews.map(review => <figure key={review.name} className="home-review"><div className="flex gap-1 mb-5" aria-label={`${review.rating} out of 5 stars`}>{Array.from({ length: 5 }).map((_, i) => <Star key={i} className={`h-3.5 w-3.5 ${i < review.rating ? 'text-primary fill-primary' : 'text-muted-foreground/30'}`} />)}</div><blockquote className="text-base leading-relaxed flex-1">“{review.text}”</blockquote><figcaption className="mt-6"><p className="text-sm font-semibold">{review.name}</p><p className="mt-1 text-xs text-muted-foreground">{review.location}</p></figcaption></figure>)}
       </div>
-    </section>
-  );
-};
-
+    </div>
+  </section>
+);
 export default Reviews;
