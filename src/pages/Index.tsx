@@ -12,6 +12,7 @@ const Index = () => {
   return (
     <>
       <Helmet>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" />
         <title>gXchange - Buy & Sell Gift Cards Instantly | Best Rates</title>
         <meta
           name="description"
