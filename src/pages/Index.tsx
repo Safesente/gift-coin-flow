@@ -5,6 +5,7 @@ import Hero from "@/components/home/Hero";
 import HowItWorks from "@/components/home/HowItWorks";
 import PopularCategories from "@/components/home/PopularCategories";
 import GiftCardShowcase from "@/components/home/GiftCardShowcase";
+import Reviews from "@/components/home/Reviews";
 import CTA from "@/components/home/CTA";
 
 const Index = () => {
@@ -68,6 +69,7 @@ const Index = () => {
           <PopularCategories />
           <HowItWorks />
           <GiftCardShowcase />
+          <Reviews />
           <CTA />
         </main>
         <Footer />
