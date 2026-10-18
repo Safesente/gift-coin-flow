@@ -76,6 +76,10 @@ const Blog = () => {
       <Helmet>
         <title>Blog - GXchange</title>
         <meta name="description" content="Read our latest articles about gift cards, crypto, and digital payments." />
+        <link rel="canonical" href="https://gxchange.cards/blog" />
+        <meta property="og:title" content="Blog - GXchange" />
+        <meta property="og:description" content="Read our latest articles about gift cards, crypto, and digital payments." />
+        <meta property="og:url" content="https://gxchange.cards/blog" />
       </Helmet>
 
       <div className="min-h-screen flex flex-col bg-background">

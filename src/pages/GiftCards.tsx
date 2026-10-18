@@ -24,6 +24,10 @@ const GiftCards = () => {
           name="description"
           content="Browse all gift cards available on gXchange. Amazon, Apple, Steam, Netflix, PlayStation, Xbox, and more brands with the best rates."
         />
+        <link rel="canonical" href="https://gxchange.cards/gift-cards" />
+        <meta property="og:title" content="All Gift Cards - gXchange" />
+        <meta property="og:description" content="Browse all gift cards available on gXchange with the best rates." />
+        <meta property="og:url" content="https://gxchange.cards/gift-cards" />
       </Helmet>
 
       <div className="min-h-screen bg-background">
