@@ -50,6 +50,10 @@ const Login = () => {
       <Helmet>
         <title>Login - gXchange | Access Your Account</title>
         <meta name="description" content="Log in to your gXchange account to buy and sell gift cards." />
+        <link rel="canonical" href="https://gxchange.cards/login" />
+        <meta property="og:title" content="Login - gXchange | Access Your Account" />
+        <meta property="og:description" content="Log in to your gXchange account to buy and sell gift cards." />
+        <meta property="og:url" content="https://gxchange.cards/login" />
       </Helmet>
 
       <div className="min-h-screen bg-gradient-hero flex items-center justify-center p-4">

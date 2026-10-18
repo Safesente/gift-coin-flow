@@ -183,6 +183,10 @@ const Sell = () => {
           name="description"
           content="Sell your gift cards on gXchange. Fast payout via PayPal or Binance Pay."
         />
+        <link rel="canonical" href="https://gxchange.cards/sell" />
+        <meta property="og:title" content="Sell Gift Cards - gXchange | Get Paid Instantly" />
+        <meta property="og:description" content="Sell your gift cards on gXchange. Fast payout via PayPal or Binance Pay." />
+        <meta property="og:url" content="https://gxchange.cards/sell" />
       </Helmet>
 
       <div className="min-h-screen bg-gradient-hero">

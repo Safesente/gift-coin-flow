@@ -116,6 +116,10 @@ const HelpCenter = () => {
       <Helmet>
         <title>Help Center - gXchange</title>
         <meta name="description" content="Get help and support from our team. Chat with us directly." />
+        <link rel="canonical" href="https://gxchange.cards/help" />
+        <meta property="og:title" content="Help Center - gXchange" />
+        <meta property="og:description" content="Get help and support from our team. Chat with us directly." />
+        <meta property="og:url" content="https://gxchange.cards/help" />
       </Helmet>
 
       <Header />
