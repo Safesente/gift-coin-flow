@@ -93,6 +93,10 @@ const ContactUs = () => {
         <Helmet>
           <title>Contact Us - gXchange</title>
           <meta name="description" content="Get in touch with gXchange. We're here to help with any questions." />
+          <link rel="canonical" href="https://gxchange.cards/contact" />
+          <meta property="og:title" content="Contact Us - gXchange" />
+          <meta property="og:description" content="Get in touch with gXchange. We're here to help with any questions." />
+          <meta property="og:url" content="https://gxchange.cards/contact" />
         </Helmet>
         <Header />
         <main className="min-h-screen pt-20 pb-16 bg-muted/30">
@@ -119,6 +123,10 @@ const ContactUs = () => {
       <Helmet>
         <title>Contact Us - gXchange</title>
         <meta name="description" content="Get in touch with gXchange. We're here to help with any questions." />
+        <link rel="canonical" href="https://gxchange.cards/contact" />
+        <meta property="og:title" content="Contact Us - gXchange" />
+        <meta property="og:description" content="Get in touch with gXchange. We're here to help with any questions." />
+        <meta property="og:url" content="https://gxchange.cards/contact" />
       </Helmet>
 
       <Header />
