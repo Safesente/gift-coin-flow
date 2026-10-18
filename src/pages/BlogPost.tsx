@@ -88,6 +88,11 @@ const BlogPost = () => {
       <Helmet>
         <title>{post.title} - GXchange Blog</title>
         <meta name="description" content={post.excerpt || post.title} />
+        <link rel="canonical" href={`https://gxchange.cards/blog/${post.slug}`} />
+        <meta property="og:title" content={`${post.title} - GXchange Blog`} />
+        <meta property="og:description" content={post.excerpt || post.title} />
+        <meta property="og:url" content={`https://gxchange.cards/blog/${post.slug}`} />
+        <meta property="og:type" content="article" />
         {post.featured_image && <meta property="og:image" content={post.featured_image} />}
       </Helmet>
 

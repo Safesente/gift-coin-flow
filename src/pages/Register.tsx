@@ -92,6 +92,10 @@ const Register = () => {
       <Helmet>
         <title>Register - gXchange | Create Your Account</title>
         <meta name="description" content="Create your free gXchange account to start buying and selling gift cards instantly." />
+        <link rel="canonical" href="https://gxchange.cards/register" />
+        <meta property="og:title" content="Register - gXchange | Create Your Account" />
+        <meta property="og:description" content="Create your free gXchange account to start buying and selling gift cards instantly." />
+        <meta property="og:url" content="https://gxchange.cards/register" />
       </Helmet>
 
       <div className="min-h-screen bg-gradient-hero flex items-center justify-center p-4">

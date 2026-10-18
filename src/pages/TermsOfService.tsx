@@ -8,6 +8,10 @@ const TermsOfService = () => {
       <Helmet>
         <title>Terms of Service - GXchange</title>
         <meta name="description" content="GXchange Terms of Service - Read our terms and conditions for using our gift card exchange platform." />
+        <link rel="canonical" href="https://gxchange.cards/terms-of-service" />
+        <meta property="og:title" content="Terms of Service - GXchange" />
+        <meta property="og:description" content="Read our terms and conditions for using the GXchange gift card exchange platform." />
+        <meta property="og:url" content="https://gxchange.cards/terms-of-service" />
       </Helmet>
       
       <div className="min-h-screen flex flex-col bg-background">

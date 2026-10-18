@@ -131,6 +131,10 @@ const Buy = () => {
           name="description"
           content="Buy gift cards at discounted prices on gXchange. Amazon, Apple, Steam, Netflix and 50+ more brands available."
         />
+        <link rel="canonical" href="https://gxchange.cards/buy" />
+        <meta property="og:title" content="Buy Gift Cards - gXchange | Get 15% Off All Cards" />
+        <meta property="og:description" content="Buy gift cards at discounted prices on gXchange. Amazon, Apple, Steam, Netflix and 50+ more brands available." />
+        <meta property="og:url" content="https://gxchange.cards/buy" />
       </Helmet>
 
       <div className="min-h-screen bg-gradient-hero">
