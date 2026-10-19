@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
 import { Mail, ArrowLeft, CheckCircle, Loader2 } from "lucide-react";
+import gxchangeLogo from "@/assets/gxchange-logo.png";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { z } from "zod";
@@ -58,17 +59,11 @@ const ForgotPassword = () => {
           <title>Check Your Email - gXchange</title>
         </Helmet>
 
-        <div className="min-h-screen bg-gradient-hero flex items-center justify-center p-4">
-          <div className="absolute inset-0 overflow-hidden pointer-events-none">
-            <div className="absolute top-20 right-10 w-72 h-72 bg-secondary/5 rounded-full blur-3xl" />
-            <div className="absolute bottom-20 left-10 w-96 h-96 bg-primary/5 rounded-full blur-3xl" />
-          </div>
-
+        <div className="auth-layout min-h-screen bg-background flex items-center justify-center p-4">
+  
           <div className="w-full max-w-md relative z-10">
             <Link to="/" className="flex items-center justify-center gap-2 mb-8">
-              <div className="w-10 h-10 rounded-xl bg-primary flex items-center justify-center shadow-glow">
-                <span className="text-primary-foreground font-bold text-xl">G</span>
-              </div>
+              <img src={gxchangeLogo} alt="" className="w-10 h-10 rounded-md" />
               <span className="text-2xl font-bold text-foreground">
                 g<span className="text-primary">X</span>change
               </span>
@@ -118,17 +113,11 @@ const ForgotPassword = () => {
         <meta name="description" content="Reset your gXchange account password." />
       </Helmet>
 
-      <div className="min-h-screen bg-gradient-hero flex items-center justify-center p-4">
-        <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          <div className="absolute top-20 right-10 w-72 h-72 bg-secondary/5 rounded-full blur-3xl" />
-          <div className="absolute bottom-20 left-10 w-96 h-96 bg-primary/5 rounded-full blur-3xl" />
-        </div>
+      <div className="auth-layout min-h-screen bg-background flex items-center justify-center p-4">
 
         <div className="w-full max-w-md relative z-10">
           <Link to="/" className="flex items-center justify-center gap-2 mb-8">
-            <div className="w-10 h-10 rounded-xl bg-primary flex items-center justify-center shadow-glow">
-              <span className="text-primary-foreground font-bold text-xl">G</span>
-            </div>
+            <img src={gxchangeLogo} alt="" className="w-10 h-10 rounded-md" />
             <span className="text-2xl font-bold text-foreground">
               g<span className="text-primary">X</span>change
             </span>

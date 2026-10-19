@@ -1,5 +1,4 @@
 import { Helmet } from "react-helmet-async";
-import { HelpCircle } from "lucide-react";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import {
@@ -67,12 +66,9 @@ const FAQ = () => {
 
       <Header />
 
-      <main className="min-h-screen pt-20 pb-16 bg-muted/30">
+      <main className="support-main min-h-screen pt-20 pb-16 bg-background">
         <div className="container mx-auto max-w-4xl px-4 py-8">
-          <div className="text-center mb-12">
-            <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto mb-4">
-              <HelpCircle className="w-8 h-8 text-primary" />
-            </div>
+          <div className="page-heading mb-12">
             <h1 className="text-3xl md:text-4xl font-bold mb-4">
               Frequently Asked <span className="text-primary">Questions</span>
             </h1>
@@ -81,7 +77,7 @@ const FAQ = () => {
             </p>
           </div>
 
-          <Card>
+          <Card className="faq-list">
             <CardHeader>
               <CardTitle>Common Questions</CardTitle>
             </CardHeader>

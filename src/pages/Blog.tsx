@@ -87,9 +87,10 @@ const Blog = () => {
 
         <main className="flex-grow container mx-auto px-4 py-8 md:py-12 mt-16 md:mt-20">
           <div className="max-w-5xl mx-auto">
-            <div className="text-center mb-8 md:mb-12">
+            <div className="page-heading mb-8 md:mb-12">
+              <p className="page-kicker">The gXchange journal</p>
               <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-                Our Blog
+                Notes on gift cards.
               </h1>
               <p className="text-muted-foreground text-lg">
                 Latest news, tips, and insights about gift cards and digital payments
@@ -98,7 +99,7 @@ const Blog = () => {
 
             {/* Category Filter */}
             {categories && categories.length > 0 && (
-              <div className="flex flex-wrap justify-center gap-2 mb-8">
+              <div className="journal-filters flex flex-wrap gap-2 mb-8">
                 <Button
                   variant={selectedCategory === null ? "default" : "outline"}
                   size="sm"
@@ -121,7 +122,7 @@ const Blog = () => {
             )}
 
             {isLoading ? (
-              <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+              <div className="journal-grid grid gap-6 md:grid-cols-2 lg:grid-cols-3">
                 {[1, 2, 3, 4, 5, 6].map((i) => (
                   <Card key={i} className="overflow-hidden">
                     <Skeleton className="h-48 w-full" />
@@ -138,7 +139,7 @@ const Blog = () => {
             ) : posts && posts.length > 0 ? (
               <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
                 {posts.map((post) => (
-                  <Card key={post.id} className="overflow-hidden hover:shadow-lg transition-shadow flex flex-col">
+                  <Card key={post.id} className="journal-post overflow-hidden flex flex-col">
                     {post.featured_image && (
                       <div className="aspect-video overflow-hidden">
                         <img

@@ -141,7 +141,7 @@ const Dashboard = () => {
             </div>
 
             {/* Stats Grid */}
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4 mb-6 md:mb-8">
+            <div className="account-metrics grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4 mb-6 md:mb-8">
               <div className="glass-card rounded-xl p-4 md:p-5">
                 <div className="flex items-center gap-2 md:gap-3 mb-2 md:mb-3">
                   <div className="w-8 h-8 md:w-10 md:h-10 rounded-lg bg-primary/10 flex items-center justify-center">
@@ -186,8 +186,8 @@ const Dashboard = () => {
             </div>
 
             {/* Quick Stats Cards */}
-            <div className="grid md:grid-cols-2 gap-3 md:gap-4 mb-6 md:mb-8">
-              <div className="glass-card rounded-xl p-4 md:p-6">
+            <div className="account-orders grid md:grid-cols-2 gap-3 md:gap-4 mb-6 md:mb-8">
+              <div className="account-section glass-card rounded-xl p-4 md:p-6">
                 <h3 className="font-semibold text-foreground mb-3 md:mb-4 flex items-center gap-2 text-sm md:text-base">
                   <TrendingUp className="w-4 h-4 md:w-5 md:h-5 text-primary" />
                   Sell Orders
@@ -208,7 +208,7 @@ const Dashboard = () => {
                 </div>
               </div>
 
-              <div className="glass-card rounded-xl p-4 md:p-6">
+              <div className="account-section glass-card rounded-xl p-4 md:p-6">
                 <h3 className="font-semibold text-foreground mb-3 md:mb-4 flex items-center gap-2 text-sm md:text-base">
                   <ShoppingCart className="w-4 h-4 md:w-5 md:h-5 text-secondary" />
                   Buy Orders
@@ -227,7 +227,7 @@ const Dashboard = () => {
             </div>
 
             {/* Transaction History */}
-            <div className="glass-card rounded-xl p-4 md:p-6">
+            <div className="account-section glass-card rounded-xl p-4 md:p-6">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 md:gap-4 mb-4 md:mb-6">
                 <h3 className="font-semibold text-foreground text-sm md:text-base">Transaction History</h3>
                 <div className="flex gap-1 md:gap-2 overflow-x-auto">
@@ -319,7 +319,7 @@ const Dashboard = () => {
                                     variant="ghost"
                                     size="icon"
                                     className="h-8 w-8"
-                                    onClick={() => copyCode(txn.code!)}
+                                    onClick={() => { if (txn.code) copyCode(txn.code); }}
                                   >
                                     <Copy className="w-4 h-4" />
                                   </Button>

@@ -17,7 +17,7 @@ const TermsOfService = () => {
       <div className="min-h-screen flex flex-col bg-background">
         <Header />
         
-        <main className="flex-1 py-12">
+        <main className="legal-main flex-1 py-12">
           <div className="container max-w-4xl mx-auto px-4">
             <h1 className="text-4xl font-bold mb-8">Terms of Service</h1>
             <p className="text-muted-foreground mb-8">Last updated: January 13, 2026</p>

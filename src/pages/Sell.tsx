@@ -3,6 +3,7 @@ import { useSearchParams, Link, useNavigate } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
+import TradeIntro from "@/components/layout/TradeIntro";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -193,23 +194,12 @@ const Sell = () => {
         <Header />
 
         <main className="pt-24 pb-16">
-          <div className="container mx-auto max-w-3xl">
+          <div className="container mx-auto trade-layout">
             {/* Page Header */}
-            <div className="text-center mb-10">
-              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 mb-4">
-                <DollarSign className="w-4 h-4 text-primary" />
-                <span className="text-sm font-medium text-foreground">Sell Your Cards</span>
-              </div>
-              <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-2">
-                Sell Your Gift Cards
-              </h1>
-              <p className="text-muted-foreground">
-                Get paid quickly via your preferred payment method
-              </p>
-            </div>
+            <TradeIntro mode="sell" />
 
             {/* Progress Steps */}
-            <div className="flex items-center justify-center gap-2 mb-10">
+            <div className="trade-progress flex items-center gap-2">
               {[1, 2, 3].map((s) => (
                 <div key={s} className="flex items-center gap-2">
                   <div
@@ -313,17 +303,17 @@ const Sell = () => {
                     <Label>Card Format</Label>
                     <div className="grid grid-cols-2 gap-3">
                       {cardFormats.map((format) => (
-                        <button
+                        <Button variant="outline" aria-pressed={cardFormat === format.id}
                           key={format.id}
                           onClick={() => setCardFormat(format.id)}
-                          className={`p-4 rounded-xl border-2 transition-all text-center ${
+                          className={`h-auto p-4 rounded-md border transition-all text-center ${
                             cardFormat === format.id
                               ? "border-primary bg-primary/5"
                               : "border-border hover:border-primary/50"
                           }`}
                         >
                           <p className="font-medium text-foreground">{format.name}</p>
-                        </button>
+                        </Button>
                       ))}
                     </div>
                   </div>
@@ -388,15 +378,15 @@ const Sell = () => {
                           alt="Screenshot preview"
                           className="w-full h-48 object-cover"
                         />
-                        <button
+                        <Button variant="ghost" size="icon" aria-label="Remove screenshot"
                           onClick={removeScreenshot}
                           className="absolute top-2 right-2 p-1 rounded-full bg-background/80 hover:bg-background transition-colors"
                         >
                           <X className="w-4 h-4" />
-                        </button>
+                        </Button>
                       </div>
                     ) : (
-                      <button
+                      <Button variant="outline"
                         onClick={() => fileInputRef.current?.click()}
                         className="w-full h-32 rounded-xl border-2 border-dashed border-border hover:border-primary/50 transition-colors flex flex-col items-center justify-center gap-2"
                       >
@@ -406,7 +396,7 @@ const Sell = () => {
                         <p className="text-sm text-muted-foreground">
                           Click to upload screenshot (max 5MB)
                         </p>
-                      </button>
+                      </Button>
                     )}
                   </div>
 
@@ -462,16 +452,16 @@ const Sell = () => {
                     <Label>Payment Method</Label>
                     <div className="grid grid-cols-2 gap-3">
                       {paymentMethods.map((method) => (
-                        <button
+                        <Button variant="outline" aria-pressed={paymentMethod === method.id}
                           key={method.id}
                           onClick={() => setPaymentMethod(method.id)}
-                          className={`p-4 rounded-xl border-2 transition-all text-left ${
+                          className={`h-auto flex-col items-start p-4 rounded-md border transition-all text-left ${
                             paymentMethod === method.id
                               ? "border-primary bg-primary/5"
                               : "border-border hover:border-primary/50"
                           }`}
                         >
-                          <div className="w-10 h-10 rounded-lg bg-white flex items-center justify-center mb-2 overflow-hidden">
+                          <div className="w-10 h-10 rounded-md bg-card flex items-center justify-center mb-2 overflow-hidden">
                             <img 
                               src={method.logo} 
                               alt={method.name} 
@@ -479,7 +469,7 @@ const Sell = () => {
                             />
                           </div>
                           <p className="font-medium text-foreground">{method.name}</p>
-                        </button>
+                        </Button>
                       ))}
                     </div>
                   </div>

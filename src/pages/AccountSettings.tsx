@@ -133,7 +133,7 @@ const AccountSettings = () => {
 
       <Header />
 
-      <main className="min-h-screen pt-20 pb-16 bg-muted/30">
+      <main className="support-main min-h-screen pt-20 pb-16 bg-background">
         <div className="container mx-auto max-w-2xl px-4 py-8">
           {/* Back link */}
           <Link 
@@ -144,7 +144,7 @@ const AccountSettings = () => {
             Back to Dashboard
           </Link>
 
-          <div className="text-center mb-8">
+          <div className="page-heading mb-8">
             <h1 className="text-2xl md:text-3xl font-bold mb-2">
               Account <span className="text-primary">Settings</span>
             </h1>
@@ -153,7 +153,7 @@ const AccountSettings = () => {
             </p>
           </div>
 
-          <div className="space-y-6">
+          <div className="settings-sections space-y-6">
             {/* Account Info */}
             <Card>
               <CardHeader>

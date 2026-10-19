@@ -124,9 +124,9 @@ const HelpCenter = () => {
 
       <Header />
 
-      <main className="min-h-screen pt-20 pb-16 bg-muted/30">
+      <main className="support-main min-h-screen pt-20 pb-16 bg-background">
         <div className="container mx-auto max-w-4xl px-4 py-8">
-          <div className="text-center mb-8">
+          <div className="page-heading mb-8">
             <h1 className="text-3xl md:text-4xl font-bold mb-4">
               Help <span className="text-primary">Center</span>
             </h1>
