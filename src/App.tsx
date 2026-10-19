@@ -9,6 +9,7 @@ import ProtectedRoute from "@/components/ProtectedRoute";
 import { AdminProtectedRoute } from "@/components/admin/AdminProtectedRoute";
 import { VisitorTracker } from "@/components/VisitorTracker";
 import WhatsAppButton from "@/components/WhatsAppButton";
+import PublicPageFrame from "@/components/layout/PublicPageFrame";
 import Index from "./pages/Index";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
@@ -56,6 +57,7 @@ const App = () => (
             <WhatsAppButton />
             <Routes>
               <Route path="/" element={<Index />} />
+              <Route element={<PublicPageFrame />}>
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
               
@@ -89,6 +91,7 @@ const App = () => (
                 }
               />
               {/* Admin Routes */}
+              </Route>
               <Route
                 path="/admin"
                 element={

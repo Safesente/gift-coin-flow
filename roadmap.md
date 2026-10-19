@@ -1,4 +1,4 @@
-# Homepage redesign
-- [x] Research common generic website patterns and define a distinctive direction.
-- [x] Redesign the homepage while preserving navigation, buying/selling, categories, gift cards, reviews, registration, and support.
-- [x] Check homepage interactions and desktop/mobile layout.
+# Other page redesign
+- [ ] Refresh trading, catalog, blog, support, legal, and account pages with a flat editorial design.
+- [ ] Preserve all forms, live content, navigation, and account workflows; leave homepage and admin unchanged.
+- [ ] Check representative page interactions and desktop/mobile layouts.
