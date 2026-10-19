@@ -3,6 +3,7 @@ import { useSearchParams, Link } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
+import TradeIntro from "@/components/layout/TradeIntro";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -141,23 +142,12 @@ const Buy = () => {
         <Header />
 
         <main className="pt-24 pb-16">
-          <div className="container mx-auto max-w-3xl">
+          <div className="container mx-auto trade-layout">
             {/* Page Header */}
-            <div className="text-center mb-10">
-              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-secondary/10 border border-secondary/20 mb-4">
-                <ShoppingCart className="w-4 h-4 text-secondary" />
-                <span className="text-sm font-medium text-foreground">Save on All Cards</span>
-              </div>
-              <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-2">
-                Buy Gift Cards
-              </h1>
-              <p className="text-muted-foreground">
-                Get gift cards at discounted rates
-              </p>
-            </div>
+            <TradeIntro mode="buy" />
 
             {/* Progress Steps */}
-            <div className="flex items-center justify-center gap-2 mb-10">
+            <div className="trade-progress flex items-center gap-2">
               {[1, 2].map((s) => (
                 <div key={s} className="flex items-center gap-2">
                   <div
@@ -271,17 +261,17 @@ const Buy = () => {
                     <Label>Card Format</Label>
                     <div className="grid grid-cols-2 gap-3">
                       {cardFormats.map((format) => (
-                        <button
+                        <Button variant="outline" aria-pressed={cardFormat === format.id}
                           key={format.id}
                           onClick={() => setCardFormat(format.id)}
-                          className={`p-4 rounded-xl border-2 transition-all text-center ${
+                          className={`h-auto p-4 rounded-md border transition-all text-center ${
                             cardFormat === format.id
                               ? "border-secondary bg-secondary/5"
                               : "border-border hover:border-secondary/50"
                           }`}
                         >
                           <p className="font-medium text-foreground">{format.name}</p>
-                        </button>
+                        </Button>
                       ))}
                     </div>
                   </div>

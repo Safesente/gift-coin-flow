@@ -36,11 +36,12 @@ const GiftCards = () => {
         <main className="pt-24 pb-16">
           <div className="container mx-auto">
             {/* Page Header */}
-            <div className="text-center mb-12">
+            <div className="page-heading mb-12">
+              <p className="page-kicker">gXchange / The collection</p>
               <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
                 All Gift Cards
               </h1>
-              <p className="text-muted-foreground max-w-2xl mx-auto">
+              <p className="text-muted-foreground max-w-2xl">
                 Choose from {giftCards.length}+ major gift card brands. Check rates for each card.
               </p>
             </div>
@@ -70,15 +71,15 @@ const GiftCards = () => {
                   {filteredCards.map((card) => (
                     <div
                       key={card.id}
-                      className="glass-card rounded-xl p-4 group transition-all duration-300 hover:shadow-medium hover:-translate-y-1"
+                      className="catalog-item group"
                     >
                       {/* Card Icon */}
-                      <div className="w-14 h-14 rounded-xl bg-background/80 border border-border/50 flex items-center justify-center mb-4 transition-transform duration-300 group-hover:scale-110 overflow-hidden">
+                      <div className="catalog-brand">
                         {card.logo_url ? (
                           <img 
                             src={card.logo_url} 
                             alt={card.name} 
-                            className="w-10 h-10 object-contain"
+                            className="w-20 h-20 object-contain"
                             onError={(e) => {
                               const target = e.target as HTMLImageElement;
                               target.style.display = 'none';
@@ -97,10 +98,10 @@ const GiftCards = () => {
                       </div>
 
                       {/* Card Info */}
-                      <h3 className="font-semibold text-foreground mb-3 truncate">{card.name}</h3>
+                      <h3 className="font-semibold text-foreground my-4 break-words">{card.name}</h3>
 
                       {/* Action Buttons */}
-                      <div className="flex flex-col gap-1.5">
+                      <div className="grid grid-cols-2 gap-2">
                         <Link to={`/sell?card=${card.id}`}>
                           <Button variant="outline" size="sm" className="w-full text-xs h-8">
                             Sell
