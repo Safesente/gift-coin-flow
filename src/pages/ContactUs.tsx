@@ -99,11 +99,11 @@ const ContactUs = () => {
           <meta property="og:url" content="https://gxchange.cards/contact" />
         </Helmet>
         <Header />
-        <main className="min-h-screen pt-20 pb-16 bg-muted/30">
+        <main className="support-main min-h-screen pt-20 pb-16 bg-background">
           <div className="container mx-auto max-w-lg px-4 py-16">
             <Card className="text-center">
               <CardContent className="pt-8 pb-8">
-                <CheckCircle className="w-16 h-16 text-green-500 mx-auto mb-4" />
+                <CheckCircle className="w-16 h-16 text-primary mx-auto mb-4" />
                 <h2 className="text-2xl font-bold mb-2">Thank You!</h2>
                 <p className="text-muted-foreground mb-6">
                   Your message has been sent successfully. We'll get back to you within 24 hours.
@@ -131,9 +131,9 @@ const ContactUs = () => {
 
       <Header />
 
-      <main className="min-h-screen pt-20 pb-16 bg-muted/30">
+      <main className="support-main min-h-screen pt-20 pb-16 bg-background">
         <div className="container mx-auto max-w-6xl px-4 py-8">
-          <div className="text-center mb-12">
+          <div className="page-heading mb-12">
             <h1 className="text-3xl md:text-4xl font-bold mb-4">
               Contact <span className="text-primary">Us</span>
             </h1>
@@ -144,7 +144,7 @@ const ContactUs = () => {
 
           <div className="grid lg:grid-cols-3 gap-8">
             {/* Contact Info Cards */}
-            <div className="lg:col-span-1 space-y-4">
+            <div className="contact-details lg:col-span-1 space-y-4">
               <Card>
                 <CardContent className="pt-6">
                   <div className="flex items-start gap-4">
@@ -191,7 +191,7 @@ const ContactUs = () => {
             </div>
 
             {/* Contact Form */}
-            <div className="lg:col-span-2">
+            <div className="contact-form lg:col-span-2">
               <Card>
                 <CardHeader>
                   <CardTitle>Send us a Message</CardTitle>
