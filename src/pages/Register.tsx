@@ -100,12 +100,7 @@ const Register = () => {
       </Helmet>
 
       <div className="auth-layout min-h-screen bg-background flex items-center justify-center p-4">
-<div className="absolute inset-0 overflow-hidden pointer-events-none">
-          <div className="absolute top-20 right-10 w-72 h-72 bg-secondary/5 rounded-full blur-3xl" />
-          <div className="absolute bottom-20 left-10 w-96 h-96 bg-primary/5 rounded-full blur-3xl" />
-        </div>
-
-        <div className="w-full max-w-md relative z-10">
+<div className="w-full max-w-md relative z-10">
           {/* Logo */}
           <Link to="/" className="flex items-center justify-center gap-2 mb-8">
             <img src={gxchangeLogo} alt="" className="w-10 h-10 rounded-md" />
