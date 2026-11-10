@@ -1,5 +1,5 @@
 import { useState, useMemo, useEffect } from "react";
-import { useSearchParams, Link } from "react-router-dom";
+import { useSearchParams, Link, useNavigate } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
@@ -15,9 +15,13 @@ import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { useGiftCards } from "@/hooks/useAdmin";
 import { useCountryRateForCard } from "@/hooks/useCountryRates";
+import { useAuth } from "@/contexts/AuthContext";
+import { buyReturnPath } from "@/lib/buyReturn";
 
 const Buy = () => {
   const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
+  const { user, loading: authLoading } = useAuth();
   const preselectedCard = searchParams.get("card") || "";
   const isSuccess = searchParams.get("success") === "true";
   const isCanceled = searchParams.get("canceled") === "true";
@@ -28,11 +32,11 @@ const Buy = () => {
   const { data: giftCards = [], isLoading: cardsLoading } = useGiftCards(false);
   
   const [selectedCard, setSelectedCard] = useState(preselectedCard);
-  const [country, setCountry] = useState("");
-  const [cardFormat, setCardFormat] = useState("");
-  const [cardAmount, setCardAmount] = useState<number | "">("");
-  const [quantity, setQuantity] = useState(1);
-  const [step, setStep] = useState(isSuccess ? 3 : 1);
+  const [country, setCountry] = useState(searchParams.get("country") || "");
+  const [cardFormat, setCardFormat] = useState(searchParams.get("format") || "");
+  const [cardAmount, setCardAmount] = useState<number | "">(Number(searchParams.get("amount")) || "");
+  const [quantity, setQuantity] = useState(Math.max(1, Number(searchParams.get("quantity")) || 1));
+  const [step, setStep] = useState(isSuccess ? 3 : searchParams.get("review") === "true" ? 2 : 1);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
 
@@ -74,7 +78,19 @@ const Buy = () => {
     return { totalValue, price, savings: totalValue - price };
   }, [cardAmount, quantity, buyRate]);
 
+  const requireSignIn = () => {
+    const returnTo = buyReturnPath({ card: selectedCard, quantity, amount: cardAmount, country, format: cardFormat });
+    navigate(`/login?returnTo=${encodeURIComponent(returnTo)}`);
+  };
+
   const handleSubmit = async () => {
+    if (authLoading) return;
+    // Revalidate immediately before checkout, including expired sessions.
+    const { data: authData, error: authError } = await supabase.auth.getUser();
+    if (authError || !authData.user || authData.user.is_anonymous) {
+      requireSignIn();
+      return;
+    }
     if (!selectedCard || !cardAmount || !selectedCardData || !country || !cardFormat) {
       toast({
         title: "Missing Information",
@@ -334,8 +350,8 @@ const Buy = () => {
                   )}
 
                   <Button
-                    onClick={() => setStep(2)}
-                    disabled={!selectedCard || !cardAmount || !country || !cardFormat}
+                    onClick={() => user && !user.is_anonymous ? setStep(2) : requireSignIn()}
+                    disabled={authLoading || !selectedCard || !cardAmount || !country || !cardFormat}
                     className="w-full gap-2"
                     size="lg"
                     variant="gold"
@@ -409,7 +425,7 @@ const Buy = () => {
                   </Button>
                   <Button
                     onClick={handleSubmit}
-                    disabled={isSubmitting}
+                    disabled={isSubmitting || authLoading}
                     className="flex-1 gap-2"
                     variant="gold"
                   >

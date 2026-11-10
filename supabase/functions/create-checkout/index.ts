@@ -2,6 +2,7 @@ import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import Stripe from "https://esm.sh/stripe@18.5.0";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.57.2";
 import nodemailer from "https://esm.sh/nodemailer@6.9.9";
+import { checkoutUser } from "./auth.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -121,6 +122,13 @@ serve(async (req) => {
   try {
     logStep("Function started");
 
+    const buyer = await checkoutUser(req.headers.get("Authorization"), (token) => supabaseClient.auth.getUser(token));
+    if (!buyer) {
+      return new Response(JSON.stringify({ error: "Sign in before checkout." }), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 401,
+      });
+    }
+
     const stripeKey = Deno.env.get("STRIPE_SECRET_KEY");
     if (!stripeKey) throw new Error("STRIPE_SECRET_KEY is not set");
     logStep("Stripe key verified");
@@ -141,18 +149,13 @@ serve(async (req) => {
     const stripe = new Stripe(stripeKey, { apiVersion: "2025-08-27.basil" });
 
     // Check if user is authenticated
-    const authHeader = req.headers.get("Authorization");
-    let userEmail: string | undefined;
-    let userId: string | undefined;
+    const userEmail = buyer.email;
+    const userId = buyer.id;
     let customerId: string | undefined;
     let fullName: string | undefined;
 
-    if (authHeader) {
-      const token = authHeader.replace("Bearer ", "");
-      const { data: userData } = await supabaseClient.auth.getUser(token);
-      if (userData.user) {
-        userEmail = userData.user.email;
-        userId = userData.user.id;
+    {
+      {
         logStep("User authenticated", { userId, email: userEmail });
 
         // Get user profile for name
@@ -200,7 +203,7 @@ serve(async (req) => {
         card_name: cardName,
         face_value: faceValue.toString(),
         quantity: quantity.toString(),
-        user_id: userId || "",
+        user_id: userId,
       },
     });
 
