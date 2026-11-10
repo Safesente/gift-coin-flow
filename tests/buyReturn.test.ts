@@ -1,6 +1,6 @@
 import { describe, expect, test } from "bun:test";
-import { buyReturnPath, safeBuyReturnPath } from "./buyReturn";
-import { checkoutUser } from "../../supabase/functions/create-checkout/auth";
+import { buyReturnPath, safeBuyReturnPath } from "../src/lib/buyReturn";
+import { checkoutUser } from "../supabase/functions/create-checkout/auth";
 
 describe("buyer sign-in", () => {
   test("checkout rejects missing or invalid sign-in and anonymous accounts", async () => {
