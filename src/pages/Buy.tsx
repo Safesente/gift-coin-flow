@@ -106,7 +106,7 @@ const Buy = () => {
       const { data, error } = await supabase.functions.invoke("create-checkout", {
         body: {
           amount: Number(cardAmount),
-          cardName: selectedCardData.name,
+          giftCardId: selectedCardData.id,
           quantity,
           country,
           cardFormat,
