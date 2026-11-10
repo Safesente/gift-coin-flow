@@ -5,6 +5,6 @@
 - [ ] Check signed-in dashboard, settings, and chat; blocked until the user signs into the preview.
 
 # Buyer checkout sign-in
-- [ ] Require valid buyer sign-in before payment, including direct checkout requests.
-- [ ] Restore selected gift card, quantity, and other selections after login.
-- [ ] Test checkout rejection and the login return flow.
+- [x] Require valid buyer sign-in before payment, including direct checkout requests.
+- [x] Restore selected gift card, quantity, and other selections after login.
+- [x] Test checkout rejection and the login return flow.
