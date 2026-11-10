@@ -1,4 +1,5 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2.57.2";
 import nodemailer from "https://esm.sh/nodemailer@6.9.9";
 
 const corsHeaders = {
@@ -16,6 +17,11 @@ interface OrderNotificationRequest {
   status: "pending" | "paid" | "completed" | "cancelled";
   giftCardCode?: string;
 }
+
+const esc = (v: unknown) => String(v ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]!));
+const json = (body: unknown, status: number) => new Response(JSON.stringify(body), {
+  status, headers: { "Content-Type": "application/json", ...corsHeaders },
+});
 
 const logStep = (step: string, details?: any) => {
   console.log(`[SEND-ORDER-NOTIFICATION] ${step}`, details ? JSON.stringify(details, null, 2) : '');
@@ -59,11 +65,32 @@ const handler = async (req: Request): Promise<Response> => {
   }
 
   try {
-    const { email, fullName, orderType, cardName, amount, quantity, status, giftCardCode }: OrderNotificationRequest = await req.json();
-    logStep("Request received", { email, orderType, cardName, status });
+    const token = (req.headers.get("Authorization") || "").replace(/^Bearer\s+/i, "");
+    if (!token) return json({ error: "Unauthorized" }, 401);
+    const admin = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!);
+    const { data: { user } } = await admin.auth.getUser(token);
+    if (!user) return json({ error: "Unauthorized" }, 401);
+    const { data: isAdmin } = await admin.rpc("has_role", { _user_id: user.id, _role: "admin" });
+    if (!isAdmin) return json({ error: "Admin access required" }, 403);
+
+    const raw: OrderNotificationRequest = await req.json();
+    const email = String(raw.email || "").trim().toLowerCase();
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) || email.length > 255) return json({ error: "Invalid email" }, 400);
+    // Only notify registered users
+    const { data: profile } = await admin.from("profiles").select("user_id").ilike("email", email).maybeSingle();
+    if (!profile) return json({ error: "Unknown recipient" }, 400);
+    const orderType = raw.orderType === "buy" ? "buy" : "sell";
+    const status = ["pending", "paid", "completed", "cancelled"].includes(raw.status) ? raw.status : "pending";
+    const cardNameRaw = String(raw.cardName || "").slice(0, 100);
+    const cardName = esc(cardNameRaw);
+    const fullName = esc(String(raw.fullName || "").slice(0, 100));
+    const amount = Number(raw.amount) || 0;
+    const quantity = Math.max(1, Math.floor(Number(raw.quantity) || 1));
+    const giftCardCode = raw.giftCardCode ? esc(String(raw.giftCardCode).slice(0, 200)) : undefined;
+    logStep("Request received", { orderType, status });
 
     const statusColor = getStatusColor(status);
-    const subject = getSubject(orderType, status, cardName);
+    const subject = getSubject(orderType, status, cardNameRaw.replace(/[\r\n]/g, " "));
     
     let codeSection = "";
     if (orderType === "buy" && status === "completed" && giftCardCode) {
@@ -161,7 +188,7 @@ const handler = async (req: Request): Promise<Response> => {
       },
     });
 
-    logStep("Sending email via SMTP", { to: email, subject });
+    logStep("Sending email via SMTP");
 
     await transporter.sendMail({
       from: `gXchange <${Deno.env.get("SMTP_USER")}>`,
@@ -178,7 +205,7 @@ const handler = async (req: Request): Promise<Response> => {
       headers: { "Content-Type": "application/json", ...corsHeaders },
     });
   } catch (error: any) {
-    logStep("Error sending order notification", { error: error.message, stack: error.stack });
+    logStep("Error sending order notification", { error: error.message });
     return new Response(
       JSON.stringify({ success: false, error: error.message }),
       { status: 500, headers: { "Content-Type": "application/json", ...corsHeaders } }

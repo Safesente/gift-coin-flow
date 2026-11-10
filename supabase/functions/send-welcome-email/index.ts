@@ -1,4 +1,5 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2.57.2";
 import nodemailer from "https://esm.sh/nodemailer@6.9.9";
 
 const corsHeaders = {
@@ -10,6 +11,11 @@ interface WelcomeEmailRequest {
   email: string;
   fullName: string;
 }
+
+const esc = (v: unknown) => String(v ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]!));
+const json = (body: unknown, status: number) => new Response(JSON.stringify(body), {
+  status, headers: { "Content-Type": "application/json", ...corsHeaders },
+});
 
 const logStep = (step: string, details?: any) => {
   console.log(`[SEND-WELCOME-EMAIL] ${step}`, details ? JSON.stringify(details, null, 2) : '');
@@ -23,8 +29,17 @@ const handler = async (req: Request): Promise<Response> => {
   }
 
   try {
-    const { email, fullName }: WelcomeEmailRequest = await req.json();
-    logStep("Request received", { email, fullName });
+    const token = (req.headers.get("Authorization") || "").replace(/^Bearer\s+/i, "");
+    if (!token) return json({ error: "Unauthorized" }, 401);
+    const admin = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!);
+    const { data: { user } } = await admin.auth.getUser(token);
+    if (!user?.email) return json({ error: "Unauthorized" }, 401);
+    // Only welcome brand-new accounts (within 1 hour of signup)
+    if (Date.now() - new Date(user.created_at).getTime() > 60 * 60 * 1000) return json({ success: true }, 200);
+    const email = user.email;
+    const { data: profile } = await admin.from("profiles").select("full_name").eq("user_id", user.id).maybeSingle();
+    const fullName = esc(String(profile?.full_name || "").slice(0, 100));
+    logStep("Request received");
 
     const htmlContent = `
       <!DOCTYPE html>
@@ -86,7 +101,7 @@ const handler = async (req: Request): Promise<Response> => {
       },
     });
 
-    logStep("Sending email via SMTP", { to: email });
+    logStep("Sending email via SMTP");
 
     await transporter.sendMail({
       from: `gXchange <${Deno.env.get("SMTP_USER")}>`,
@@ -103,7 +118,7 @@ const handler = async (req: Request): Promise<Response> => {
       headers: { "Content-Type": "application/json", ...corsHeaders },
     });
   } catch (error: any) {
-    logStep("Error sending welcome email", { error: error.message, stack: error.stack });
+    logStep("Error sending welcome email", { error: error.message });
     return new Response(
       JSON.stringify({ success: false, error: error.message }),
       { status: 500, headers: { "Content-Type": "application/json", ...corsHeaders } }
