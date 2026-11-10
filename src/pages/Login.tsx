@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -8,6 +8,7 @@ import { Eye, EyeOff, ArrowRight, Mail, Lock } from "lucide-react";
 import gxchangeLogo from "@/assets/gxchange-logo.png";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
+import { safeBuyReturnPath } from "@/lib/buyReturn";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -17,12 +18,14 @@ const Login = () => {
   const { toast } = useToast();
   const { signIn, user } = useAuth();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const destination = safeBuyReturnPath(searchParams.get("returnTo"));
 
   useEffect(() => {
     if (user) {
-      navigate("/dashboard");
+      navigate(destination, { replace: true });
     }
-  }, [user, navigate]);
+  }, [user, navigate, destination]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -41,7 +44,7 @@ const Login = () => {
         title: "Welcome back!",
         description: "You have successfully logged in.",
       });
-      navigate("/dashboard");
+      navigate(destination, { replace: true });
     }
     setIsLoading(false);
   };
