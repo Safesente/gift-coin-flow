@@ -92,7 +92,7 @@ Deno.serve(async (req) => {
     const user = users.users.find((u) => u.email === email);
     
     if (!user) {
-      console.log("update-user-password: Target user not found:", email);
+      console.log("update-user-password: Target user not found");
       return new Response(
         JSON.stringify({ error: "User not found" }),
         { status: 404, headers: { ...corsHeaders, "Content-Type": "application/json" } }
@@ -113,7 +113,7 @@ Deno.serve(async (req) => {
       );
     }
 
-    console.log("update-user-password: Password updated successfully for user:", email, "by admin:", callingUser.id);
+    console.log("update-user-password: Password updated successfully by admin:", callingUser.id);
 
     return new Response(
       JSON.stringify({ success: true, message: "Password updated successfully" }),
