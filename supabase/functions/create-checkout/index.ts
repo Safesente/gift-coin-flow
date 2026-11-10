@@ -14,6 +14,17 @@ const logStep = (step: string, details?: any) => {
   console.log(`[CREATE-CHECKOUT] ${step}${detailsStr}`);
 };
 
+const esc = (v: unknown) => String(v ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]!));
+const ALLOWED_AMOUNTS = [10, 15, 20, 25, 50, 100, 150, 200, 250, 500];
+const ALLOWED_ORIGINS = ["https://gxchange.cards", "https://www.gxchange.cards", "https://gift-coin-flow.lovable.app"];
+const safeOrigin = (origin: string | null) => {
+  if (!origin) return "https://gxchange.cards";
+  if (ALLOWED_ORIGINS.includes(origin)) return origin;
+  if (/^https:\/\/[a-z0-9-]+\.lovable\.app$/.test(origin) || /^https:\/\/[a-z0-9-]+\.lovableproject\.com$/.test(origin)) return origin;
+  if (/^http:\/\/localhost(:\d+)?$/.test(origin)) return origin;
+  return "https://gxchange.cards";
+};
+
 const sendOrderNotification = async (email: string, fullName: string, cardName: string, amount: number, quantity: number) => {
   try {
     const transporter = nodemailer.createTransport({
@@ -43,7 +54,7 @@ const sendOrderNotification = async (email: string, fullName: string, cardName: 
           </div>
           <div style="padding: 40px 30px;">
             <p style="color: #334155; font-size: 16px; line-height: 1.6; margin: 0 0 20px;">
-              Hi ${fullName || "there"},
+              Hi ${esc(fullName || "there")},
             </p>
             <p style="color: #334155; font-size: 16px; line-height: 1.6; margin: 0 0 20px;">
               We have received your buy order and it's now being processed.
@@ -53,7 +64,7 @@ const sendOrderNotification = async (email: string, fullName: string, cardName: 
               <table style="width: 100%; border-collapse: collapse;">
                 <tr>
                   <td style="color: #64748b; padding: 8px 0;">Gift Card:</td>
-                  <td style="color: #334155; font-weight: 600; text-align: right; padding: 8px 0;">${cardName}</td>
+                  <td style="color: #334155; font-weight: 600; text-align: right; padding: 8px 0;">${esc(cardName)}</td>
                 </tr>
                 <tr>
                   <td style="color: #64748b; padding: 8px 0;">Amount:</td>
@@ -98,7 +109,7 @@ const sendOrderNotification = async (email: string, fullName: string, cardName: 
       html: htmlContent,
     });
 
-    logStep("Order notification email sent", { email });
+    logStep("Order notification email sent");
   } catch (error: any) {
     logStep("Failed to send notification email", { error: error.message });
   }
@@ -133,15 +144,33 @@ serve(async (req) => {
     if (!stripeKey) throw new Error("STRIPE_SECRET_KEY is not set");
     logStep("Stripe key verified");
 
-    const { amount, cardName, quantity } = await req.json();
-    logStep("Request body parsed", { amount, cardName, quantity });
+    const body = await req.json();
+    const amount = Number(body?.amount);
+    const quantity = Number(body?.quantity);
+    const giftCardId = typeof body?.giftCardId === "string" ? body.giftCardId : "";
+    const country = typeof body?.country === "string" ? body.country.slice(0, 8) : "";
+    const badRequest = (msg: string) => new Response(JSON.stringify({ error: msg }), {
+      headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 400,
+    });
+    if (!ALLOWED_AMOUNTS.includes(amount)) return badRequest("Invalid amount");
+    if (!Number.isInteger(quantity) || quantity < 1 || quantity > 100) return badRequest("Invalid quantity");
+    if (!/^[0-9a-f-]{36}$/i.test(giftCardId)) return badRequest("Invalid gift card");
 
-    if (!amount || !cardName || !quantity) {
-      throw new Error("Missing required fields: amount, cardName, quantity");
+    // Server-owned pricing
+    const { data: card } = await supabaseAdmin
+      .from("gift_cards").select("id, name, buy_rate, is_active").eq("id", giftCardId).maybeSingle();
+    if (!card || !card.is_active) return badRequest("Gift card unavailable");
+    let ratePct = Number(card.buy_rate) || 85;
+    if (country) {
+      const { data: cr } = await supabaseAdmin
+        .from("gift_card_country_rates").select("buy_rate").eq("gift_card_id", giftCardId).eq("country_code", country).maybeSingle();
+      if (cr?.buy_rate) ratePct = Number(cr.buy_rate);
     }
+    if (!(ratePct > 0 && ratePct <= 100)) return badRequest("Pricing unavailable");
+    const cardName: string = card.name;
+    logStep("Request validated", { amount, quantity, giftCardId });
 
-    // Calculate price (85% of face value)
-    const BUY_RATE = 0.85;
+    const BUY_RATE = ratePct / 100;
     const priceInCents = Math.round(amount * BUY_RATE * quantity * 100);
     const faceValue = amount * quantity;
     logStep("Price calculated", { priceInCents, faceValue });
@@ -156,7 +185,7 @@ serve(async (req) => {
 
     {
       {
-        logStep("User authenticated", { userId, email: userEmail });
+        logStep("User authenticated", { userId });
 
         // Get user profile for name
         const { data: profile } = await supabaseAdmin
@@ -177,7 +206,7 @@ serve(async (req) => {
       }
     }
 
-    const origin = req.headers.get("origin") || "https://gxchange.cards";
+    const origin = safeOrigin(req.headers.get("origin"));
 
     // Create checkout session
     const session = await stripe.checkout.sessions.create({

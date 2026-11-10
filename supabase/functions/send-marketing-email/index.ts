@@ -94,7 +94,13 @@ const handler = async (req: Request): Promise<Response> => {
 
       emails = profiles.map(p => p.email).filter(Boolean) as string[];
     } else if (recipientEmails && recipientEmails.length > 0) {
-      emails = recipientEmails;
+      // Only allow sending to registered users' addresses
+      const requested = [...new Set(recipientEmails.map((e) => String(e).trim().toLowerCase()).filter(Boolean))].slice(0, 500);
+      const { data: known, error: knownError } = await supabase
+        .from("profiles").select("email").not("email", "is", null);
+      if (knownError) throw new Error("Failed to verify recipients");
+      const knownSet = new Set((known || []).map((p) => (p.email || "").toLowerCase()));
+      emails = requested.filter((e) => knownSet.has(e));
     }
 
     if (emails.length === 0) {

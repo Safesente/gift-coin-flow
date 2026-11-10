@@ -96,7 +96,7 @@ const sendOrderNotification = async (email: string, fullName: string, cardName: 
       html: htmlContent,
     });
 
-    logStep("Order notification email sent", { email });
+    logStep("Order notification email sent");
   } catch (error: any) {
     logStep("Failed to send notification email", { error: error.message });
   }
@@ -129,7 +129,7 @@ serve(async (req) => {
     const user = userData.user;
     if (!user) throw new Error("User not authenticated");
 
-    logStep("User authenticated", { userId: user.id, email: user.email });
+    logStep("User authenticated", { userId: user.id });
 
     const { cardName, amount, quantity, paymentMethod, paymentDetails, giftCardCode, country, cardFormat, screenshotUrl } = await req.json();
     logStep("Request body parsed", { cardName, amount, quantity, paymentMethod, country, cardFormat, hasCode: !!giftCardCode, hasScreenshot: !!screenshotUrl });
